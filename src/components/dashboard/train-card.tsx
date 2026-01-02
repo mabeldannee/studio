@@ -1,160 +1,73 @@
 import Link from 'next/link';
-import type { Train, PresenceConfidence } from '@/lib/types';
+import type { Coach } from '@/lib/types';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import {
-  CheckCircle,
-  Users,
-  HelpCircle,
-  XCircle,
-  Siren,
-  TrainFront,
-  Clock,
-  AlertTriangle,
-} from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../ui/tooltip';
+import { CheckCircle, AlertTriangle, XCircle, Users } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface TrainCardProps {
-  train: Train;
+  coach: Coach;
 }
 
-export function TrainCard({ train }: TrainCardProps) {
-  const allSeats = train.coaches.flatMap(c => c.seats);
-  const totalSeats = allSeats.length;
+const getStatus = (coach: Coach) => {
+    const highAlerts = coach.seats.filter(s => s.status === 'Presence Confirmed' && (s.presenceConfidence === 'Anomalous' || s.presenceConfidence === 'Late')).length;
+    if (highAlerts > 0) {
+        return {
+            label: `${highAlerts} Pending`,
+            Icon: AlertTriangle,
+            color: 'text-yellow-400',
+            bgColor: 'bg-yellow-900/50',
+            borderColor: 'border-yellow-400/50'
+        };
+    }
+    const unverified = coach.seats.filter(s => s.status === 'Unverified Presence').length;
+    if (unverified > 0) {
+         return {
+            label: `${unverified} Pending`,
+            Icon: AlertTriangle,
+            color: 'text-yellow-400',
+            bgColor: 'bg-yellow-900/50',
+            borderColor: 'border-yellow-400/50'
+        };
+    }
+    if (coach.occupancy > 98) {
+         return {
+            label: 'Conflict Detected',
+            Icon: AlertTriangle,
+            color: 'text-red-400',
+            bgColor: 'bg-red-900/50',
+            borderColor: 'border-red-400/50'
+        };
+    }
+    return {
+        label: 'Verified',
+        Icon: CheckCircle,
+        color: 'text-green-400',
+        bgColor: 'bg-green-900/50',
+        borderColor: 'border-green-400/50'
+    };
+}
 
-  const seatsByStatus = allSeats.reduce((acc, seat) => {
-    acc[seat.status] = (acc[seat.status] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
 
-  const presenceByConfidence = allSeats
-    .filter(s => s.status === 'Presence Confirmed')
-    .reduce((acc, seat) => {
-      if (seat.presenceConfidence) {
-        acc[seat.presenceConfidence] = (acc[seat.presenceConfidence] || 0) + 1;
-      }
-      return acc;
-    }, {} as Record<PresenceConfidence, number>);
-
-  const coachGroups = train.coaches.reduce((acc, coach) => {
-    const type = coach.coachNumber.charAt(0);
-    if (!acc[type]) acc[type] = [];
-    acc[type].push(coach);
-    return acc;
-  }, {} as Record<string, typeof train.coaches>);
-
+export function TrainCard({ coach }: TrainCardProps) {
+    const status = getStatus(coach);
 
   return (
-    <Card className="flex flex-col">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-bold flex items-center gap-2">
-            <TrainFront className="h-5 w-5 text-primary" /> {train.trainNumber}
-          </CardTitle>
-          {train.alerts.length > 0 && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <div className="flex items-center gap-1 text-destructive font-semibold">
-                    <Siren className="h-4 w-4" />
-                    <span>{train.alerts.length}</span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>{train.alerts.length} high-urgency alerts</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-        </div>
-        <CardDescription>{train.name}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow space-y-4">
-        <div>
-          <div className="flex justify-between text-xs text-muted-foreground mb-1">
-            <span>Journey Progress</span>
-            <span>{train.journeyProgress}%</span>
-          </div>
-          <Progress value={train.journeyProgress} aria-label={`${train.journeyProgress}% complete`} />
-        </div>
-        
-        <div className="grid grid-cols-2 gap-x-2 gap-y-4 text-sm">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger className="flex items-center gap-2 text-left">
-                <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                <div>
-                  <div className="font-semibold">{seatsByStatus['Ticket Verified'] || 0}</div>
-                  <div className="text-xs text-muted-foreground">Verified</div>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>Tickets Verified</TooltipContent>
-            </Tooltip>
-            
-            <Tooltip>
-              <TooltipTrigger className="flex items-center gap-2 text-left">
-                <Users className="h-4 w-4 text-blue-500 flex-shrink-0" />
-                <div>
-                  <div className="font-semibold">{seatsByStatus['Presence Confirmed'] || 0}</div>
-                  <div className="text-xs text-muted-foreground">Presence</div>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Presence Confirmed: {seatsByStatus['Presence Confirmed'] || 0}</p>
-                <p className="text-xs">Early: {presenceByConfidence['Early'] || 0}</p>
-                <p className="text-xs">Late: {presenceByConfidence['Late'] || 0}</p>
-                <p className="text-xs">Anomalous: {presenceByConfidence['Anomalous'] || 0}</p>
-              </TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger className="flex items-center gap-2 text-left">
-                <HelpCircle className="h-4 w-4 text-yellow-500 flex-shrink-0" />
-                <div>
-                  <div className="font-semibold">{seatsByStatus['Unverified Presence'] || 0}</div>
-                  <div className="text-xs text-muted-foreground">Unverified</div>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>Unverified Presence</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger className="flex items-center gap-2 text-left">
-                <XCircle className="h-4 w-4 text-gray-500 flex-shrink-0" />
-                <div>
-                  <div className="font-semibold">{seatsByStatus['Likely Vacant'] || 0}</div>
-                  <div className="text-xs text-muted-foreground">Vacant</div>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>Likely Vacant</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </CardContent>
-      <CardFooter className="flex-col items-start gap-2">
-        <span className="text-xs font-semibold text-muted-foreground">COACHES</span>
-         <div className="w-full flex flex-wrap gap-2">
-          {Object.entries(coachGroups).map(([type, coaches]) => (
-            <div key={type} className="flex gap-1 items-center">
-              {coaches.map(coach => (
-                <Button key={coach.id} variant="outline" size="sm" className="h-8 w-12" asChild>
-                  <Link href={`/dashboard/coach/${coach.id}`}>{coach.coachNumber}</Link>
-                </Button>
-              ))}
-            </div>
-          ))}
-        </div>
-      </CardFooter>
-    </Card>
+    <Link href={`/dashboard/coach/${coach.id}`} passHref>
+        <Card className={cn("bg-card text-card-foreground border-2 transition-all hover:border-primary/80 cursor-pointer", status.borderColor)}>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-xl font-bold">{coach.coachNumber}</CardTitle>
+            <status.Icon className={cn("h-6 w-6", status.color)} />
+        </CardHeader>
+        <CardContent>
+            <div className="text-2xl font-bold">{coach.occupancy}% Full</div>
+            <p className="text-xs" style={{ color: status.color }}>{status.label}</p>
+        </CardContent>
+        </Card>
+    </Link>
   );
 }
