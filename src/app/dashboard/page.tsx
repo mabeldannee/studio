@@ -12,6 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Siren, ArrowRight, Bot } from 'lucide-react';
 import Link from 'next/link';
+import { VerificationFocus } from '@/components/dashboard/verification-focus';
 
 export default function DashboardPage() {
   const allAlerts: AlertType[] = trains.flatMap(train =>
@@ -31,7 +32,7 @@ export default function DashboardPage() {
           <CardContent>
             <p className="text-sm text-muted-foreground flex items-center gap-2">
               <Bot className="h-4 w-4 text-primary" />
-              <span>AI assistance is active.</span>
+              <span>Presence Intelligence is active.</span>
             </p>
           </CardContent>
         </Card>
@@ -62,6 +63,8 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      <VerificationFocus trains={trains} />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
         <div className="lg:col-span-8">

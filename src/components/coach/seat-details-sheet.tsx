@@ -11,11 +11,11 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import type { Seat, SeatStatus } from '@/lib/types';
+import type { Seat, SeatStatus, PresenceConfidence } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
-import { Clock, Bot, Ticket, Loader2, ShieldAlert, Check } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import { Clock, Bot, Ticket, Loader2, ShieldAlert, Check, AlertTriangle, UserCheck, HelpCircle } from 'lucide-react';
+import { format, formatDistanceToNow } from 'date-fns';
 import { explainAlert } from '@/ai/flows/explain-alerts';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
@@ -26,7 +26,7 @@ interface SeatDetailsSheetProps {
   onUpdateStatus: (seatId: string, status: SeatStatus) => void;
 }
 
-const statusBadgeVariants = cva('text-xs font-bold', {
+const statusBadgeVariants = cva('text-xs font-bold capitalize', {
   variants: {
     status: {
       'Ticket Verified': 'bg-green-100 text-green-800 border-green-300',
@@ -36,6 +36,17 @@ const statusBadgeVariants = cva('text-xs font-bold', {
     },
   },
 });
+
+const confidenceBadgeVariants = cva('text-xs font-bold', {
+    variants: {
+        confidence: {
+            'Early': 'bg-blue-100 text-blue-800 border-blue-300',
+            'Late': 'bg-orange-100 text-orange-800 border-orange-300',
+            'Anomalous': 'bg-red-100 text-red-800 border-red-300',
+        }
+    }
+});
+
 
 export function SeatDetailsSheet({ seat, isOpen, onOpenChange, onUpdateStatus }: SeatDetailsSheetProps) {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -52,11 +63,13 @@ export function SeatDetailsSheet({ seat, isOpen, onOpenChange, onUpdateStatus }:
             alertType: 'Presence Confirmed but Ticket Unverified',
             seatNumber: seat.seatNumber,
             coachNumber: seat.seatNumber.split('-')[0],
+            additionalContext: `Presence confirmed with '${seat.presenceConfidence}' confidence. ${seat.presenceContext}.`,
+            presenceTiming: seat.presenceConfidence,
           });
           setAiExplanation(result.explanation);
         } catch (error) {
           console.error('Failed to get AI explanation:', error);
-          setAiExplanation('AI explanation not available. Please verify passenger ticket and ID.');
+          setAiExplanation('AI explanation not available. Please verify passenger ticket and ID. This alert highlights a verification need, not proof of invalid travel.');
         } finally {
           setIsAiLoading(false);
         }
@@ -82,22 +95,45 @@ export function SeatDetailsSheet({ seat, isOpen, onOpenChange, onUpdateStatus }:
   
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent className="sm:max-w-md">
+      <SheetContent className="sm:max-w-md flex flex-col">
         <SheetHeader>
           <SheetTitle className="text-2xl">Seat {seat.seatNumber}</SheetTitle>
           <SheetDescription>
             View details and perform actions for this seat.
           </SheetDescription>
         </SheetHeader>
-        <div className="py-6 space-y-4">
-          <div>
-            <h4 className="text-sm font-semibold text-muted-foreground mb-2">Current Status</h4>
+        <div className="py-6 space-y-6 flex-grow">
+          <div className='space-y-1'>
+            <h4 className="text-sm font-semibold text-muted-foreground">Current Status</h4>
             <Badge className={cn(statusBadgeVariants({ status: seat.status }))} variant="outline">
               {seat.status}
             </Badge>
           </div>
-          <div>
-            <h4 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-2">
+          
+          {seat.status === 'Presence Confirmed' && seat.presenceConfidence && (
+            <div className='space-y-1'>
+              <h4 className="text-sm font-semibold text-muted-foreground">Presence Intelligence</h4>
+              <div className="flex flex-wrap gap-2">
+                <Badge className={cn(confidenceBadgeVariants({ confidence: seat.presenceConfidence }))} variant="outline">
+                   {seat.presenceConfidence}
+                </Badge>
+                {seat.presenceSource && <Badge variant="outline">{seat.presenceSource}</Badge>}
+              </div>
+              {seat.presenceTimestamp && (
+                  <p className="text-xs text-muted-foreground pt-1">
+                    Confirmed {formatDistanceToNow(new Date(seat.presenceTimestamp), { addSuffix: true })}
+                </p>
+              )}
+               {seat.presenceContext && (
+                  <p className="text-xs text-muted-foreground pt-1">
+                    {seat.presenceContext}
+                </p>
+              )}
+            </div>
+          )}
+
+          <div className='space-y-1'>
+            <h4 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
               <Clock className="h-4 w-4" />
               Last Updated
             </h4>
@@ -116,7 +152,7 @@ export function SeatDetailsSheet({ seat, isOpen, onOpenChange, onUpdateStatus }:
                     aiExplanation && (
                         <Alert variant="destructive">
                             <ShieldAlert className="h-4 w-4" />
-                            <AlertTitle>Action Required</AlertTitle>
+                            <AlertTitle>Verification Recommended</AlertTitle>
                             <AlertDescription>{aiExplanation}</AlertDescription>
                         </Alert>
                     )
@@ -124,6 +160,9 @@ export function SeatDetailsSheet({ seat, isOpen, onOpenChange, onUpdateStatus }:
             </div>
           )}
 
+        </div>
+        <div className="bg-muted text-muted-foreground text-xs p-3 rounded-lg text-center">
+            Presence indicates occupancy only. Ticket validity must be verified by the TTE.
         </div>
         <SheetFooter>
             {seat.status !== 'Ticket Verified' && (

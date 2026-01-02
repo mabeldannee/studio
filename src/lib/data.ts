@@ -1,4 +1,4 @@
-import type { Train, Coach, Seat, Alert, SeatStatus } from '@/lib/types';
+import type { Train, Coach, Seat, Alert, SeatStatus, PresenceConfidence } from '@/lib/types';
 
 const seatStatuses: SeatStatus[] = [
   'Ticket Verified',
@@ -7,16 +7,38 @@ const seatStatuses: SeatStatus[] = [
   'Likely Vacant',
 ];
 
+const presenceConfidences: PresenceConfidence[] = ['Early', 'Late', 'Anomalous'];
+const presenceSources: Seat['presenceSource'][] = ['Passenger', 'Visual', 'Inference'];
+const stations = ['New Delhi', 'Kanpur', 'Allahabad', 'Mughalsarai'];
+
 const generateSeats = (coachId: string, count: number): Seat[] => {
   return Array.from({ length: count }, (_, i) => {
     const seatNumber = `${coachId}-${String(i + 1).padStart(2, '0')}`;
-    const status = seatStatuses[Math.floor(Math.random() * seatStatuses.length)];
-    const isPresentConfirmed = status === 'Presence Confirmed';
-    const isTicketVerified = status === 'Ticket Verified';
+    let status = seatStatuses[Math.floor(Math.random() * seatStatuses.length)];
     
+    let presenceConfidence: PresenceConfidence | undefined = undefined;
+    let presenceTimestamp: string | undefined = undefined;
+    let presenceSource: Seat['presenceSource'] | undefined = undefined;
+    let presenceContext: string | undefined = undefined;
+    
+    if (status === 'Presence Confirmed') {
+        presenceConfidence = presenceConfidences[Math.floor(Math.random() * presenceConfidences.length)];
+        presenceTimestamp = new Date(Date.now() - Math.random() * 1000 * 60 * 30).toISOString();
+        presenceSource = presenceSources[Math.floor(Math.random() * presenceSources.length)];
+        presenceContext = `Confirmed after ${stations[Math.floor(Math.random() * stations.length)]} Station`;
+    } else {
+        // Ensure that only Presence Confirmed seats have presence details
+        status = (['Unverified Presence', 'Likely Vacant', 'Ticket Verified'] as SeatStatus[])[Math.floor(Math.random() * 3)];
+    }
+
+
     let suspiciousPatternScore = Math.random();
-    if (isPresentConfirmed && !isTicketVerified) {
-        suspiciousPatternScore = Math.random() * 0.5 + 0.5; // Higher score
+    if (status === 'Presence Confirmed') {
+        if (presenceConfidence === 'Anomalous' || presenceConfidence === 'Late') {
+            suspiciousPatternScore = Math.random() * 0.4 + 0.6; // 0.6 - 1.0
+        } else {
+            suspiciousPatternScore = Math.random() * 0.3 + 0.3; // 0.3 - 0.6
+        }
     }
 
     return {
@@ -26,6 +48,10 @@ const generateSeats = (coachId: string, count: number): Seat[] => {
       lastUpdated: new Date(Date.now() - Math.random() * 1000 * 60 * 60).toISOString(),
       isSuspicious: status === 'Presence Confirmed',
       suspiciousPatternScore,
+      presenceConfidence,
+      presenceTimestamp,
+      presenceSource,
+      presenceContext,
     };
   });
 };
@@ -48,7 +74,7 @@ const generateAlerts = (trainId: string, coaches: Coach[]): Alert[] => {
   const alerts: Alert[] = [];
   coaches.forEach(coach => {
     coach.seats.forEach(seat => {
-      if (seat.status === 'Presence Confirmed') {
+      if (seat.status === 'Presence Confirmed' && (seat.presenceConfidence === 'Late' || seat.presenceConfidence === 'Anomalous')) {
         alerts.push({
           id: `alert-${seat.id}`,
           trainId,
@@ -58,6 +84,9 @@ const generateAlerts = (trainId: string, coaches: Coach[]): Alert[] => {
           description: `Seat ${seat.seatNumber} has a confirmed presence but the ticket is not verified. Please check immediately.`,
           timestamp: new Date().toISOString(),
           urgency: 'high',
+          context: {
+              presenceTiming: seat.presenceConfidence
+          }
         });
       }
       if (seat.status === 'Likely Vacant' && Math.random() > 0.95) {

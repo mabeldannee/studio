@@ -3,7 +3,7 @@
 import type { Seat } from '@/lib/types';
 import { SeatCard } from './seat-card';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
-import { CheckCircle, Users, HelpCircle, XCircle } from 'lucide-react';
+import { CheckCircle, Users, HelpCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
 
 interface SeatGridProps {
   seats: Seat[];
@@ -16,13 +16,19 @@ export function SeatGrid({ seats, onSeatSelect }: SeatGridProps) {
       <CardHeader>
         <CardTitle>Seat Layout</CardTitle>
         <CardDescription>
-          Select a seat to view details and perform actions. The layout is prioritized by AI.
+          Select a seat to view details. Layout is prioritized by AI. Presence indicators show timing confidence.
         </CardDescription>
          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground pt-2">
             <div className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-500" /> Ticket Verified</div>
             <div className="flex items-center gap-2"><Users className="h-3 w-3 text-blue-500" /> Presence Confirmed</div>
-            <div className="flex items-center gap-2"><HelpCircle className="h-3 w-3 text-yellow-500" /> Unverified Presence</div>
-            <div className="flex items-center gap-2"><XCircle className="h-3 w-3 text-gray-500" /> Likely Vacant</div>
+            <div className="flex items-center gap-2"><HelpCircle className="h-3 w-3 text-yellow-500" /> Unverified</div>
+            <div className="flex items-center gap-2"><XCircle className="h-3 w-3 text-gray-500" /> Vacant</div>
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground pt-2 border-t mt-2 pt-2">
+            <span className="font-semibold">Indicators:</span>
+            <div className="flex items-center gap-2"><Clock className="h-3 w-3 text-blue-600" /> Early Presence</div>
+            <div className="flex items-center gap-2"><Clock className="h-3 w-3 text-orange-500" /> Late Presence</div>
+            <div className="flex items-center gap-2"><AlertTriangle className="h-3 w-3 text-red-500" /> Anomalous</div>
         </div>
       </CardHeader>
       <CardContent>

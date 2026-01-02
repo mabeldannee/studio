@@ -1,3 +1,6 @@
+
+export type PresenceConfidence = 'Early' | 'Late' | 'Anomalous';
+
 export type SeatStatus =
   | 'Ticket Verified'
   | 'Presence Confirmed'
@@ -11,6 +14,10 @@ export interface Seat {
   lastUpdated: string;
   isSuspicious?: boolean;
   suspiciousPatternScore: number;
+  presenceConfidence?: PresenceConfidence;
+  presenceTimestamp?: string;
+  presenceSource?: 'Passenger' | 'Visual' | 'Inference';
+  presenceContext?: string; // e.g., 'Confirmed after New Delhi Station'
 }
 
 export interface Coach {
@@ -39,4 +46,7 @@ export interface Alert {
   description: string;
   timestamp: string;
   urgency: 'high' | 'medium' | 'low';
+  context?: {
+    presenceTiming?: PresenceConfidence;
+  };
 }
