@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Bot, BarChart, CheckCircle, Users, HelpCircle, XCircle } from 'lucide-react';
@@ -11,7 +11,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
   ChartConfig,
-  ChartStyle,
 } from "@/components/ui/chart";
 import { Bar, BarChart as RechartsBarChart, XAxis, YAxis } from "recharts";
 
@@ -44,12 +43,15 @@ export function AISummary({ coach, seats }: AISummaryProps) {
   const [summary, setSummary] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const seatsByStatus = seats.reduce((acc, seat) => {
-    acc[seat.status] = (acc[seat.status] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const seatsByStatus = useMemo(() => {
+    return seats.reduce((acc, seat) => {
+      acc[seat.status] = (acc[seat.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+  }, [seats]);
 
-  const chartData = [
+
+  const chartData = useMemo(() => [
     {
       status: "Seats",
       verified: seatsByStatus['Ticket Verified'] || 0,
@@ -57,14 +59,17 @@ export function AISummary({ coach, seats }: AISummaryProps) {
       unverified: seatsByStatus['Unverified Presence'] || 0,
       vacant: seatsByStatus['Likely Vacant'] || 0,
     },
-  ];
+  ], [seatsByStatus]);
 
   useEffect(() => {
     const fetchSummary = async () => {
       setIsLoading(true);
       try {
-        const coachOverview = `Coach ${coach.coachNumber} has an occupancy of ${coach.occupancy}%. Verified: ${seatsByStatus['Ticket Verified'] || 0}, Presence Confirmed: ${seatsByStatus['Presence Confirmed'] || 0}.`;
-        const riskHotspots = `High-risk seats are those with 'Presence Confirmed' status. There are ${seatsByStatus['Presence Confirmed'] || 0} such seats.`;
+        const verifiedCount = seatsByStatus['Ticket Verified'] || 0;
+        const presenceCount = seatsByStatus['Presence Confirmed'] || 0;
+
+        const coachOverview = `Coach ${coach.coachNumber} has an occupancy of ${coach.occupancy}%. Verified: ${verifiedCount}, Presence Confirmed: ${presenceCount}.`;
+        const riskHotspots = `High-risk seats are those with 'Presence Confirmed' status. There are ${presenceCount} such seats.`;
         const suggestedCheckOrder = 'Prioritize seats with confirmed presence, then unverified, and finally vacant seats.';
 
         const result = await aiSummarizeCoach({
