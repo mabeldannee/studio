@@ -2,7 +2,7 @@
 'use client';
 
 import { AuthGuard } from '@/components/dashboard/auth-guard';
-import { Home, ClipboardList, User, BarChart, Bell, MessageSquare, Wrench } from 'lucide-react';
+import { Home, ClipboardList, User, BarChart, Bell, List, Wrench } from 'lucide-react';
 import Link from 'next/link';
 import { Header } from '@/components/dashboard/header';
 import { usePathname } from 'next/navigation';
@@ -38,8 +38,8 @@ export default function DashboardLayout({
 
   const obhsNavItems = [
       { href: '/dashboard/obhs', icon: Wrench, label: 'Requests' },
+      { href: '#', icon: List, label: 'Activity Log' },
       { href: '#', icon: Bell, label: 'Alerts' },
-      { href: '#', icon: MessageSquare, label: 'Chat' },
       { href: '#', icon: User, label: 'Profile' },
   ];
 

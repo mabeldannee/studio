@@ -9,8 +9,9 @@ export type SeatStatus =
   | 'Likely Vacant';
 
 export type ServiceRequestType = 'Food' | 'Clean' | 'Medical' | 'Help';
-export type ServiceRequestStatus = 'Pending' | 'Acknowledged' | 'Completed';
+export type ServiceRequestStatus = 'Waiting for Action' | 'In Progress' | 'Closed';
 export type ServiceRequestPriority = 'Low' | 'Medium' | 'High';
+export type CompletionReason = 'Service Provided' | 'Handed Over at Station' | 'Not Feasible Onboard' | null;
 
 
 export interface ServiceRequest {
@@ -20,7 +21,9 @@ export interface ServiceRequest {
   status: ServiceRequestStatus;
   priority: ServiceRequestPriority;
   timeRaised: string;
-  details?: string; // e.g., for 'Clean', 'Washroom area'
+  details?: string;
+  snoozeUntil?: string;
+  completionReason?: CompletionReason;
 }
 
 export interface Seat {

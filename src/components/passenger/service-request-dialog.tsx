@@ -42,14 +42,11 @@ export function ServiceRequestDialog({
 
   const handleConfirm = async () => {
     setIsLoading(true);
-    // Simulate API call
+    // Simulate API call to create the service request
+    console.log(`Service Request: ${serviceType}, Details: ${details}`);
     await new Promise(resolve => setTimeout(resolve, 1000));
     setIsLoading(false);
     setStep('confirmed');
-    toast({
-        title: "Request Submitted",
-        description: `Your ${serviceType} request has been sent to the onboard staff.`,
-    });
   };
 
   const handleClose = () => {
@@ -58,6 +55,10 @@ export function ServiceRequestDialog({
     setTimeout(() => {
         setStep('initial');
         setDetails('');
+        toast({
+            title: "Request Submitted",
+            description: `Your ${serviceType} request has been sent to the onboard staff.`,
+        });
     }, 300);
   };
   
@@ -66,7 +67,7 @@ export function ServiceRequestDialog({
   const { icon: Icon, title, description, placeholder } = serviceDetails[serviceType];
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md p-8">
         {step === 'initial' && (
           <>

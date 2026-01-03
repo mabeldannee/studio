@@ -1,5 +1,6 @@
 
-import type { Train, Coach, Seat, Alert, SeatStatus, PresenceConfidence, ServiceRequest } from '@/lib/types';
+
+import type { Train, Coach, Seat, Alert, SeatStatus, PresenceConfidence, ServiceRequest, ServiceRequestStatus } from '@/lib/types';
 
 const seatStatuses: SeatStatus[] = [
   'Ticket Verified',
@@ -12,21 +13,27 @@ const presenceConfidences: PresenceConfidence[] = ['Early', 'Late', 'Anomalous']
 const presenceSources: Seat['presenceSource'][] = ['Passenger', 'Visual', 'Inference'];
 const stations = ['New Delhi', 'Kanpur', 'Allahabad', 'Mughalsarai'];
 const serviceRequestTypes: ServiceRequest['type'][] = ['Food', 'Clean', 'Medical', 'Help'];
-const serviceRequestStatuses: ServiceRequest['status'][] = ['Pending', 'Acknowledged', 'Completed'];
+const serviceRequestStatuses: ServiceRequestStatus[] = ['Waiting for Action', 'In Progress', 'Closed'];
 
 const generateServiceRequests = (coachId: string, seats: Seat[]): ServiceRequest[] => {
     const requests: ServiceRequest[] = [];
+    const usedSeats = new Set();
     seats.forEach(seat => {
-        if (Math.random() < 0.1) { // 10% chance a seat has a request
+        if (Math.random() < 0.15 && !usedSeats.has(seat.id)) { // 15% chance a seat has a request
+            usedSeats.add(seat.id);
             const type = serviceRequestTypes[Math.floor(Math.random() * serviceRequestTypes.length)];
+            let priority: ServiceRequest['priority'] = 'Low';
+            if (type === 'Medical') priority = 'High';
+            if (type === 'Clean') priority = 'Medium';
+            
             requests.push({
                 id: `req-${seat.id}-${type}`,
                 seatId: seat.id,
                 type,
                 status: serviceRequestStatuses[Math.floor(Math.random() * serviceRequestStatuses.length)],
-                priority: ['Low', 'Medium', 'High'][Math.floor(Math.random() * 3)] as ServiceRequest['priority'],
-                timeRaised: new Date(Date.now() - Math.random() * 1000 * 60 * 45).toISOString(),
-                details: type === 'Clean' ? 'Washroom area' : undefined
+                priority: priority,
+                timeRaised: new Date(Date.now() - Math.random() * 1000 * 60 * 60 * 2).toISOString(),
+                details: type === 'Clean' ? 'Washroom area needs attention.' : (type === 'Food' ? 'Requesting water bottle.' : undefined)
             });
         }
     });
