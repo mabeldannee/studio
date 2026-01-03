@@ -1,4 +1,3 @@
-
 // src/app/dashboard/obhs/page.tsx
 'use client';
 import { useState, useMemo, useEffect } from 'react';
@@ -8,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Utensils, Sparkles, PlusSquare, Headset, Check, Clock, Shield, AlertTriangle, Snooze, CheckCircle2, History } from 'lucide-react';
+import { Utensils, Sparkles, PlusSquare, Headset, Check, Clock, Shield, AlertTriangle, CheckCircle2, History } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -155,7 +154,7 @@ export default function ObhsDashboardPage() {
                                                       </div>
                                                       <div className="flex items-center gap-2 self-end sm:self-center">
                                                           <Badge className={cn(statusColors[request.status])} variant="outline">{request.status}</Badge>
-                                                          {isSnoozed && <Badge variant="outline"><Snooze className="h-3 w-3 mr-1"/> Snoozed</Badge>}
+                                                          {isSnoozed && <Badge variant="outline"><History className="h-3 w-3 mr-1"/> Snoozed</Badge>}
                                                           <Button size="sm" variant="outline" onClick={() => openAcknowledgeDialog(request)} disabled={request.status !== 'Waiting for Action'}>
                                                               <Check className="h-4 w-4 mr-1" /> Acknowledge
                                                           </Button>

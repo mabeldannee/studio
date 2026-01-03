@@ -10,7 +10,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Check, Snooze } from 'lucide-react';
+import { Check, History } from 'lucide-react';
 import type { ServiceRequest } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
@@ -69,13 +69,13 @@ export function AcknowledgeRequestDialog({
           </Button>
           <div className="grid grid-cols-3 gap-2">
              <Button variant="outline" onClick={() => handleSnooze(10)}>
-                <Snooze className="mr-2 h-4 w-4" /> 10 min
+                <History className="mr-2 h-4 w-4" /> 10 min
              </Button>
              <Button variant="outline" onClick={() => handleSnooze(20)}>
-                <Snooze className="mr-2 h-4 w-4" /> 20 min
+                <History className="mr-2 h-4 w-4" /> 20 min
              </Button>
              <Button variant="outline" onClick={() => handleSnooze(30)}>
-                <Snooze className="mr-2 h-4 w-4" /> 30 min
+                <History className="mr-2 h-4 w-4" /> 30 min
              </Button>
           </div>
         </DialogFooter>
