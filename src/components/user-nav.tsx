@@ -27,11 +27,7 @@ export function UserNav() {
   const userAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar');
 
   const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('rail-assist-auth');
-      localStorage.removeItem('rail-assist-role');
-    }
-    router.push('/');
+    router.push('/dashboard/logout');
   };
 
   return (
