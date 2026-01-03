@@ -3,7 +3,7 @@
 'use client';
 
 import { AuthGuard } from '@/components/dashboard/auth-guard';
-import { Home, ClipboardList, User, BarChart, Bell, List, Wrench, Search, Users } from 'lucide-react';
+import { Home, ClipboardList, User, BarChart, Bell, List, Wrench, Search, Users, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { Header } from '@/components/dashboard/header';
 import { usePathname } from 'next/navigation';
@@ -33,7 +33,7 @@ export default function DashboardLayout({
   const tteNavItems = [
     { href: '/dashboard/home', icon: Bell, label: 'Alerts' },
     { href: '/dashboard/reallocate', icon: Users, label: 'Reallocate' },
-    { href: '#', icon: Search, label: 'Search' },
+    { href: '/dashboard/summary', icon: FileText, label: 'Summary' },
     { href: '/login', icon: User, label: 'Profile' },
   ];
 
@@ -57,7 +57,7 @@ export default function DashboardLayout({
         <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border/50 p-2 shadow-[0_-1px_10px_rgba(0,0,0,0.05)]">
             <nav className="flex justify-around items-center max-w-md mx-auto">
                 {navItems.map((item) => {
-                    const isActive = pathname === item.href || (item.href === defaultHome && pathname.startsWith('/dashboard') && !pathname.includes('/coach') && !pathname.includes('reallocate'));
+                    const isActive = pathname === item.href || (item.href === defaultHome && pathname === '/dashboard');
                     return (
                         <Link
                           key={item.label}

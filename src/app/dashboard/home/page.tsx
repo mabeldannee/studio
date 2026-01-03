@@ -1,160 +1,72 @@
 
 'use client';
 
-import {
-  ArrowLeft,
-  Book,
-  AlertTriangle,
-  Send,
-  CheckCircle,
-  Clock,
-  User,
-  Users,
-} from 'lucide-react';
+import { TrainCard } from '@/components/dashboard/train-card';
+import { VerificationFocus } from '@/components/dashboard/verification-focus';
+import { trains } from '@/lib/data';
+import type { Train } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertTriangle, Filter } from 'lucide-react';
+import Link from 'next/link';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { useRouter } from 'next/navigation';
 
 export default function DashboardHomePage() {
-  const router = useRouter();
-  const train = {
-    trainNumber: '12951',
-    name: 'Rajdhani Exp',
-    route: 'New Delhi → Mumbai Central',
-    date: 'Oct 24, 2023 - 16:30 hrs',
-    isCompleted: true,
-  };
+  const train: Train | undefined = trains[0];
 
-  const stats = [
-    {
-      title: 'Total Seats Checked',
-      value: '452',
-      Icon: Users,
-    },
-    {
-      title: 'Verified Rate',
-      value: '94%',
-      Icon: CheckCircle,
-    },
-    {
-      title: 'Vacant Seats',
-      value: '18',
-      Icon: User,
-    },
-    {
-      title: 'Est. Time Saved',
-      value: '45m',
-      Icon: Clock,
-    },
-  ];
+  if (!train) {
+    return <div>Train not found</div>;
+  }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-xl font-bold">Journey Summary</h1>
+    <div className="grid gap-6">
+      <div className="bg-card p-4 rounded-lg border">
+        <div className="flex justify-between items-center mb-2">
+          <h1 className="text-xl font-bold">{train.trainNumber}-{train.name}</h1>
+          <div className="flex items-center gap-1 text-sm font-medium text-green-400">
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+            ONLINE
           </div>
         </div>
-      </div>
+        <p className="text-xs text-muted-foreground">Last Sync: Just Now</p>
 
-      <Card className="bg-card">
-        <CardContent className="p-4">
-          <div className="flex justify-between items-start">
-            <div>
-              <h2 className="text-xl font-bold">
-                {train.trainNumber} {train.name}
-              </h2>
-              <p className="text-sm text-muted-foreground">{train.route}</p>
-              <p className="text-xs text-muted-foreground mt-2">{train.date}</p>
-              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                <Book className="h-3 w-3" /> Data Saved Locally
-              </p>
-            </div>
-            {train.isCompleted && (
-              <Badge variant="secondary" className="bg-green-500/10 text-green-400 border-green-500/20">
-                COMPLETED
-              </Badge>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-2 gap-4">
-        {stats.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="pb-2">
-              <stat.Icon className="h-5 w-5 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{stat.value}</p>
-              <p className="text-xs text-muted-foreground">{stat.title}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <div>
-        <h3 className="text-sm font-semibold text-muted-foreground mb-2">
-          Verification Progress
-        </h3>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-sm">425 Verified - 27 Unverified</p>
-              <p className="text-sm font-bold text-primary">94%</p>
-            </div>
-            <Progress value={94} className="h-2" />
-            <div className="flex items-center gap-4 text-xs mt-2">
-              <div className="flex items-center gap-1.5">
-                <div className="h-2 w-2 rounded-full bg-primary"></div>
-                Verified (425)
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="h-2 w-2 rounded-full bg-muted-foreground/50"></div>
-                Pending (27)
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div>
-        <h3 className="text-sm font-semibold text-muted-foreground mb-3">
-          QUICK ACTIONS
-        </h3>
-        <div className="space-y-3">
-          <Card className="bg-card hover:bg-muted/50 cursor-pointer">
-            <CardContent className="p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-md">
-                  <Book className="h-5 w-5 text-primary" />
+        <div className="mt-4">
+            <div className="flex justify-between items-end text-sm">
+                <div>
+                    <p className='text-xs text-muted-foreground'>CURRENT LOCATION</p>
+                    <p className="font-bold">New Delhi</p>
                 </div>
-                <p className="font-semibold">View Detailed Log</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-card hover:bg-muted/50 cursor-pointer">
-            <CardContent className="p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-500/10 rounded-md">
-                  <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                <div className='text-right'>
+                    <p className='text-xs text-muted-foreground'>NEXT</p>
+                    <p className="font-bold">Kanpur Central</p>
                 </div>
-                <p className="font-semibold">Flagged Incidents (2)</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Button className="w-full text-base py-6">
-            <Send className="mr-2 h-4 w-4" />
-            Submit Supervisor Report
-          </Button>
+            </div>
+            <Progress value={train.journeyProgress} className="h-1 mt-2" />
+             <div className="flex justify-between items-end text-xs text-muted-foreground mt-1">
+                <p>NDLS</p>
+                <p>Distance: 450km</p>
+                <p>CNB</p>
+            </div>
         </div>
       </div>
+      
+      <div className="flex items-center gap-2">
+        <Button size="sm" variant="outline" className="rounded-full">All Coaches ({train.coaches.length})</Button>
+        <Button size="sm" variant="outline" className="rounded-full flex items-center gap-1.5"><AlertTriangle className="h-4 w-4 text-yellow-400" /> Attention (2)</Button>
+        <Button size="sm" variant="outline" className="rounded-full">AC Class</Button>
+      </div>
+
+       <div>
+        <h2 className="text-sm font-semibold text-muted-foreground mb-3">
+          COACH OVERVIEW
+        </h2>
+        <div className="grid grid-cols-2 gap-4">
+            {train.coaches.map((coach) => (
+                <TrainCard key={coach.id} coach={coach} />
+            ))}
+        </div>
+       </div>
+
+      <VerificationFocus trains={[train]} />
     </div>
   );
 }
