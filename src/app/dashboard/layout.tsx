@@ -32,8 +32,7 @@ export default function DashboardLayout({
 
   const tteNavItems = [
     { href: '/dashboard/home', icon: Bell, label: 'Alerts' },
-    { href: '#', icon: ClipboardList, label: 'Manifest' },
-    { href: '#', icon: Users, label: 'Reallocate' },
+    { href: '/dashboard/reallocate', icon: Users, label: 'Reallocate' },
     { href: '#', icon: Search, label: 'Search' },
     { href: '/login', icon: User, label: 'Profile' },
   ];
@@ -58,7 +57,7 @@ export default function DashboardLayout({
         <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border/50 p-2 shadow-[0_-1px_10px_rgba(0,0,0,0.05)]">
             <nav className="flex justify-around items-center max-w-md mx-auto">
                 {navItems.map((item) => {
-                    const isActive = pathname === item.href || (item.href === defaultHome && pathname.startsWith('/dashboard') && !pathname.includes('/coach'));
+                    const isActive = pathname === item.href || (item.href === defaultHome && pathname.startsWith('/dashboard') && !pathname.includes('/coach') && !pathname.includes('reallocate'));
                     return (
                         <Link
                           key={item.label}
