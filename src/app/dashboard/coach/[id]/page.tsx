@@ -1,28 +1,28 @@
 
 'use client';
-import { notFound, useRouter } from 'next/navigation';
+import { notFound, useRouter, useParams, useSearchParams } from 'next/navigation';
 import { findCoach, findTrain } from '@/lib/data';
 import Link from 'next/link';
 import { ArrowLeft, MoreVertical, Search, Wifi, AlertTriangle, Check, CheckCircle, Ban } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 
-type CoachPageProps = {
-  params: { id: string };
-  searchParams: { [key:string]: string | string[] | undefined };
-};
-
-export default function CoachPage({ params }: CoachPageProps) {
+export default function CoachPage() {
   const router = useRouter();
-  const coach = findCoach(params.id);
+  const params = useParams();
+  const searchParams = useSearchParams();
+
+  const coachId = params.id as string;
+  const coach = findCoach(coachId);
 
   if (!coach) {
     notFound();
   }
 
   const train = findTrain(coach.trainId);
-  const initialSeatId = searchParams.seat as string | undefined;
+  const initialSeatId = searchParams.get('seat');
 
   const passengers = [
       { id: 1, name: "Rajesh Kumar", pnr: "823-456-7890", route: "NDLS -> CNB", seat: "45", berth: "LOWER", status: "Pending" },
@@ -86,7 +86,7 @@ export default function CoachPage({ params }: CoachPageProps) {
                                     </div>
                                     <div>
                                         <p className="font-semibold">{p.name}</p>
-                                        <p className="text-xs text-muted-foreground">PNR: {p.pnr} &#x2022; {p.route}</p>
+                                        <p className="text-xs text-muted-foreground">PNR: {p.pnr} • {p.route}</p>
                                     </div>
                                 </div>
                                 {p.status === "Verified" && <CheckCircle className="h-6 w-6 text-green-500" />}
@@ -104,7 +104,7 @@ export default function CoachPage({ params }: CoachPageProps) {
                                 {p.status === "Present" && (
                                      <div className="flex items-center justify-between">
                                          <Badge variant="outline" className="border-blue-500/50 text-blue-400">
-                                            <Check className="h-3 w-3 mr-1.5"/> Marked Present <span className="text-muted-foreground ml-2">&#x2022; Local</span>
+                                            <Check className="h-3 w-3 mr-1.5"/> Marked Present <span className="text-muted-foreground ml-2">• Local</span>
                                         </Badge>
                                         <Button size="sm" variant="ghost">Undo</Button>
                                     </div>
