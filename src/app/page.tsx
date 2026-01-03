@@ -10,46 +10,46 @@ export default function Home() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'home-hero-train');
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background antialiased">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background antialiased p-4">
       {heroImage && (
         <Image
           src={heroImage.imageUrl}
           alt={heroImage.description}
           data-ai-hint={heroImage.imageHint}
           fill
-          className="object-cover"
+          className="object-cover z-0"
           priority
         />
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent z-10"></div>
+      <div className="absolute inset-0 bg-black/70 z-10"></div>
 
-      <div className="relative z-20 flex w-full max-w-7xl flex-col items-center justify-between px-4 text-center text-white lg:flex-row lg:text-left lg:px-8">
-        {/* Left Side Content */}
-        <div className="lg:w-1/2 mb-10 lg:mb-0 lg:pr-10">
-          <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
+      <div className="relative z-20 flex w-full max-w-lg flex-col items-center text-center text-white">
+        
+        {/* Header Content */}
+        <div className="mb-10">
+          <div className="flex items-center justify-center gap-3 mb-4">
             <Train className="h-8 w-8 text-primary" />
             <span className="text-xl font-semibold tracking-wider">RailAssist AI</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
             The Future of Railway Operations is Here
           </h1>
-          <p className="mt-4 text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0">
-            Leveraging AI to streamline ticket verification, enhance passenger services, and provide real-time operational intelligence. Save time, reduce disturbances, and create a seamless journey for everyone.
+          <p className="mt-4 text-lg text-slate-300">
+            Leveraging AI to streamline ticket verification, enhance passenger services, and provide real-time operational intelligence.
           </p>
         </div>
 
-        {/* Right Side Login Cards */}
-        <div className="w-full lg:w-1/2 max-w-md lg:max-w-none">
-          <div className="space-y-4">
+        {/* Login Cards */}
+        <div className="w-full space-y-4">
             <Link href="/passenger-login" passHref>
               <div className="group flex items-center gap-6 rounded-xl border border-white/20 bg-white/5 p-5 backdrop-blur-lg transition-all duration-300 hover:border-primary hover:bg-white/10 cursor-pointer">
                 <div className="rounded-full bg-primary/10 p-4 border border-primary/20">
                   <User className="h-8 w-8 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold">Passenger</h3>
-                  <p className="text-sm text-slate-300 mt-1">
-                    Confirm your presence and request assistance.
+                  <h3 className="text-xl font-bold text-left">Passenger</h3>
+                  <p className="text-sm text-slate-300 mt-1 text-left">
+                    Confirm presence and request assistance.
                   </p>
                 </div>
                 <ArrowRight className="ml-auto h-6 w-6 text-slate-500 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
@@ -62,8 +62,8 @@ export default function Home() {
                   <UserCog className="h-8 w-8 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold">Ticket Examiner</h3>
-                  <p className="text-sm text-slate-300 mt-1">
+                  <h3 className="text-xl font-bold text-left">Ticket Examiner</h3>
+                  <p className="text-sm text-slate-300 mt-1 text-left">
                     Access the AI-powered operational dashboard.
                   </p>
                 </div>
@@ -77,16 +77,15 @@ export default function Home() {
                   <Wrench className="h-8 w-8 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold">Onboard Service</h3>
-                  <p className="text-sm text-slate-300 mt-1">
-                    View and manage passenger service requests.
+                  <h3 className="text-xl font-bold text-left">Onboard Service</h3>
+                  <p className="text-sm text-slate-300 mt-1 text-left">
+                    Manage passenger service requests.
                   </p>
                 </div>
                 <ArrowRight className="ml-auto h-6 w-6 text-slate-500 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
               </div>
             </Link>
           </div>
-        </div>
       </div>
 
       <footer className="absolute bottom-4 z-20 text-center text-xs text-slate-400">
