@@ -105,10 +105,13 @@ export function VerificationFocus({ trains }: VerificationFocusProps) {
                     
                     <div className="flex items-center gap-2">
                         {config.buttonText && (
-                            <Button asChild className="flex-1">
+                             <Button asChild className="flex-1" variant="outline">
                                 <Link href={`/dashboard/coach/${alert.coachId}?seat=${alert.seatId}`}>{config.buttonText}</Link>
                             </Button>
                         )}
+                        <Button asChild className="flex-1">
+                            <Link href={`/dashboard/coach/${alert.coachId}?seat=${alert.seatId}`}>Seat Action</Link>
+                        </Button>
                         <Button variant="ghost" className="flex-1 text-muted-foreground">Dismiss</Button>
                     </div>
                  </div>
