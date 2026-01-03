@@ -1,6 +1,6 @@
 
 
-import type { Train, Coach, Seat, Alert, SeatStatus, PresenceConfidence, ServiceRequest, ServiceRequestStatus } from '@/lib/types';
+import type { Train, Coach, Seat, Alert, SeatStatus, PresenceConfidence, ServiceRequest, ServiceRequestStatus, ServiceRequestType } from '@/lib/types';
 
 const seatStatuses: SeatStatus[] = [
   'Ticket Verified',
@@ -12,7 +12,7 @@ const seatStatuses: SeatStatus[] = [
 const presenceConfidences: PresenceConfidence[] = ['Early', 'Late', 'Anomalous'];
 const presenceSources: Seat['presenceSource'][] = ['Passenger', 'Visual', 'Inference'];
 const stations = ['New Delhi', 'Kanpur', 'Allahabad', 'Mughalsarai'];
-const serviceRequestTypes: ServiceRequest['type'][] = ['Food', 'Clean', 'Medical', 'Help'];
+const serviceRequestTypes: ServiceRequestType[] = ['Food', 'Clean', 'Medical', 'Help'];
 const serviceRequestStatuses: ServiceRequestStatus[] = ['Waiting for Action', 'In Progress', 'Closed'];
 
 const generateServiceRequests = (coachId: string, seats: Seat[]): ServiceRequest[] => {
