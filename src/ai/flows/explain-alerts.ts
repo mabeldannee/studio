@@ -1,3 +1,4 @@
+
 // src/ai/flows/explain-alerts.ts
 'use server';
 
@@ -13,11 +14,11 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ExplainAlertInputSchema = z.object({
-  alertType: z.string().describe('The type of alert (e.g., Presence Confirmed but Ticket Unverified, Persistent Likely Vacant seats).'),
+  alertType: z.string().describe('The type of alert (e.g., Presence Confirmed but Ticket Unverified, Persistent Likely Vacant seats, Passenger age discrepancy).'),
   seatNumber: z.string().optional().describe('The seat number associated with the alert, if applicable.'),
   coachNumber: z.string().optional().describe('The coach number associated with the alert, if applicable.'),
   trainNumber: z.string().optional().describe('The train number associated with the alert, if applicable.'),
-  additionalContext: z.string().optional().describe('Any additional context relevant to the alert, such as presence timing.'),
+  additionalContext: z.string().optional().describe('Any additional context relevant to the alert, such as presence timing or discrepancy details.'),
   presenceTiming: z.enum(['Early', 'Late', 'Anomalous']).optional().describe("The timing of the presence confirmation (e.g., 'Late', 'Anomalous')."),
 });
 export type ExplainAlertInput = z.infer<typeof ExplainAlertInputSchema>;
@@ -54,6 +55,7 @@ const explainAlertPrompt = ai.definePrompt({
   **Explanation Generation:**
   Based on the data, generate an explanation.
   - If presence timing is 'Late' or 'Anomalous', explain that this pattern warrants a routine check. For example: "Presence was confirmed after a major station. This pattern suggests a routine check is advisable to ensure proper ticketing."
+  - If alertType is 'Passenger age discrepancy', explain that the system noted a mismatch between booking data and visual sensor estimates and that a manual check is advised.
   - Keep the tone professional and neutral.
   - Your final output must be just the JSON object with the "explanation" field.
   `,
@@ -71,6 +73,8 @@ const explainAlertFlow = ai.defineFlow(
         let explanation = "AI system offline. Please perform standard verification procedures.";
         if (input.alertType === 'Presence Confirmed but Ticket Unverified') {
             explanation = `A passenger is in seat ${input.seatNumber}, but their ticket hasn't been verified. Physical ticket and ID verification is recommended. This alert highlights a verification need, not proof of invalid travel.`
+        } else if (input.alertType === 'Passenger age discrepancy') {
+            explanation = `The system noted a potential age mismatch for the passenger in seat ${input.seatNumber}. Manual ID verification is recommended. This alert highlights a verification need, not proof of invalid travel.`
         }
         return { explanation };
     }

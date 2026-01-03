@@ -9,11 +9,17 @@ const seatStatuses: SeatStatus[] = [
   'Likely Vacant',
 ];
 
+const berths: Seat['berth'][] = ['Lower', 'Middle', 'Upper', 'Side Lower', 'Side Upper'];
+const passengerClasses: Seat['passenger']['class'][] = ['Sleeper', 'AC 3 Tier', 'AC 2 Tier', 'AC 1 Tier'];
+const passengerGenders: Seat['passenger']['gender'][] = ['M', 'F'];
+
+
 const presenceConfidences: PresenceConfidence[] = ['Early', 'Late', 'Anomalous'];
 const presenceSources: Seat['presenceSource'][] = ['Passenger', 'Visual', 'Inference'];
 const stations = ['New Delhi', 'Kanpur', 'Allahabad', 'Mughalsarai'];
 const serviceRequestTypes: ServiceRequestType[] = ['Food', 'Clean', 'Medical', 'Help'];
 const serviceRequestStatuses: ServiceRequestStatus[] = ['Waiting for Action', 'In Progress', 'Closed'];
+const passengerNames = ['Rajesh K.', 'Priya S.', 'Amit V.', 'Sunita M.', 'V. Kumar', 'Deepa R.'];
 
 const generateServiceRequests = (coachId: string, seats: Seat[]): ServiceRequest[] => {
     const requests: ServiceRequest[] = [];
@@ -71,17 +77,26 @@ const generateSeats = (coachId: string, count: number): Seat[] => {
         }
     }
 
+    const passenger = status !== 'Likely Vacant' ? {
+        name: passengerNames[Math.floor(Math.random() * passengerNames.length)],
+        pnr: `${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000000) + 1000000}`,
+        age: Math.floor(Math.random() * 60) + 18,
+        gender: passengerGenders[Math.floor(Math.random() * passengerGenders.length)],
+        class: passengerClasses[Math.floor(Math.random() * passengerClasses.length)],
+    } : undefined;
+
     return {
       id: seatNumber,
       seatNumber: seatNumber,
+      berth: berths[i % berths.length],
       status: status,
       lastUpdated: new Date(Date.now() - Math.random() * 1000 * 60 * 60).toISOString(),
-      isSuspicious: status === 'Presence Confirmed',
       suspiciousPatternScore,
       presenceConfidence,
       presenceTimestamp,
       presenceSource,
       presenceContext,
+      passenger,
     };
   });
 };
@@ -102,69 +117,89 @@ const generateCoaches = (trainId: string, coachNumbers: string[]): Coach[] => {
   });
 };
 
+const generateAlertsForSeat = (trainId: string, coachId: string, seat: Seat): Alert[] => {
+    const alerts: Alert[] = [];
+    if (seat.status === 'Presence Confirmed' && (seat.presenceConfidence === 'Late' || seat.presenceConfidence === 'Anomalous')) {
+        alerts.push({
+          id: `alert-presence-${seat.id}`,
+          trainId,
+          coachId: coachId,
+          seatId: seat.id,
+          type: 'Presence Confirmed but Ticket Unverified',
+          description: `Seat ${seat.seatNumber} has a confirmed presence but the ticket is not verified.`,
+          timestamp: new Date().toISOString(),
+          urgency: 'high',
+          context: { presenceTiming: seat.presenceConfidence }
+        });
+    }
+    if (seat.status === 'Unverified Presence' && Math.random() > 0.8) {
+         alerts.push({
+          id: `alert-age-${seat.id}`,
+          trainId,
+          coachId: coachId,
+          seatId: seat.id,
+          type: 'Passenger age discrepancy',
+          description: `Passenger age discrepancy flagged`,
+          timestamp: new Date().toISOString(),
+          urgency: 'high',
+        });
+    }
+
+    if (seat.status === 'Likely Vacant' && Math.random() > 0.9) {
+        alerts.push({
+          id: `alert-vacant-${seat.id}`,
+          trainId,
+          coachId: coachId,
+          seatId: seat.id,
+          type: 'Likely Vacant (No-show predicted)',
+          description: `Seat ${seat.seatNumber} has been marked as 'Likely Vacant' for an extended period.`,
+          timestamp: new Date().toISOString(),
+          urgency: 'medium',
+        });
+    }
+
+    return alerts;
+}
+
 const generateAlerts = (trainId: string, coaches: Coach[]): Alert[] => {
   const alerts: Alert[] = [];
   coaches.forEach(coach => {
     coach.seats.forEach(seat => {
-      if (seat.status === 'Presence Confirmed' && (seat.presenceConfidence === 'Late' || seat.presenceConfidence === 'Anomalous')) {
-        alerts.push({
-          id: `alert-${seat.id}`,
-          trainId,
-          coachId: coach.id,
-          seatId: seat.id,
-          type: 'Presence Confirmed but Ticket Unverified',
-          description: `Seat ${seat.seatNumber} has a confirmed presence but the ticket is not verified. Please check immediately.`,
-          timestamp: new Date().toISOString(),
-          urgency: 'high',
-          context: {
-              presenceTiming: seat.presenceConfidence
-          }
-        });
-      }
-      if (seat.status === 'Likely Vacant' && Math.random() > 0.95) {
-        alerts.push({
-          id: `alert-vacant-${seat.id}`,
-          trainId,
-          coachId: coach.id,
-          seatId: seat.id,
-          type: 'Persistent Likely Vacant',
-          description: `Seat ${seat.seatNumber} has been marked as 'Likely Vacant' for an extended period.`,
-          timestamp: new Date().toISOString(),
-          urgency: 'low',
-        });
-      }
+      const seatAlerts = generateAlertsForSeat(trainId, coach.id, seat);
+      seat.alert = seatAlerts[0];
+      alerts.push(...seatAlerts);
     });
     if (coach.occupancy > 95) {
         alerts.push({
           id: `alert-overcrowd-${coach.id}`,
           trainId,
           coachId: coach.id,
-          type: 'Overcrowding Risk',
+          type: 'High crowd density detected',
           description: `Coach ${coach.coachNumber} is at ${coach.occupancy}% capacity. Monitor for overcrowding.`,
           timestamp: new Date().toISOString(),
-          urgency: 'medium',
+          urgency: 'low',
         });
     }
   });
-  return alerts.slice(0, 5); // Limit alerts for UI
+  return alerts;
 };
 
-const coaches1 = generateCoaches('TRN12345', ['S1', 'S2', 'S3', 'B1', 'B2', 'A1']);
+const coaches1 = generateCoaches('TRN12951', ['A1', 'S3', 'S5', 'B2', 'B3', 'S6']);
 const coaches2 = generateCoaches('TRN67890', ['S1', 'S2', 'S3', 'S4', 'S5', 'B1', 'B2', 'A1']);
 
 export const trains: Train[] = [
   {
-    id: 'TRN12345',
-    trainNumber: '12345',
-    name: 'Shatabdi Express',
+    id: 'TRN12951',
+    trainNumber: '12951',
+    name: 'Rajdhani Express',
     journeyProgress: 75,
     coaches: coaches1,
-    alerts: generateAlerts('TRN12345', coaches1),
+    alerts: generateAlerts('TRN12951', coaches1),
   },
   {
     id: 'TRN67890',
     trainNumber: '67890',
-    name: 'Rajdhani Express',
+    name: 'Shatabdi Express',
     journeyProgress: 40,
     coaches: coaches2,
     alerts: generateAlerts('TRN67890', coaches2),

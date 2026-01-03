@@ -29,14 +29,22 @@ export interface ServiceRequest {
 export interface Seat {
   id: string;
   seatNumber: string;
+  berth?: 'Lower' | 'Middle' | 'Upper' | 'Side Lower' | 'Side Upper';
   status: SeatStatus;
   lastUpdated: string;
-  isSuspicious?: boolean;
   suspiciousPatternScore: number;
   presenceConfidence?: PresenceConfidence;
   presenceTimestamp?: string;
   presenceSource?: 'Passenger' | 'Visual' | 'Inference';
   presenceContext?: string; // e.g., 'Confirmed after New Delhi Station'
+  passenger?: {
+    name: string;
+    pnr: string;
+    age: number;
+    gender: 'M' | 'F';
+    class: 'Sleeper' | 'AC 3 Tier' | 'AC 2 Tier' | 'AC 1 Tier';
+  }
+  alert?: Alert;
 }
 
 export interface Coach {

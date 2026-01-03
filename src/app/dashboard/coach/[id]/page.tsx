@@ -1,4 +1,6 @@
-import { notFound } from 'next/navigation';
+
+'use client';
+import { notFound, useRouter } from 'next/navigation';
 import { findCoach, findTrain } from '@/lib/data';
 import {
   Breadcrumb,
@@ -10,6 +12,8 @@ import {
 } from '@/components/ui/breadcrumb';
 import Link from 'next/link';
 import { CoachView } from '@/components/coach/coach-view';
+import { ArrowLeft, MoreVertical, Search, Wifi } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 type CoachPageProps = {
   params: { id: string };
@@ -17,6 +21,7 @@ type CoachPageProps = {
 };
 
 export default function CoachPage({ params, searchParams }: CoachPageProps) {
+  const router = useRouter();
   const coach = findCoach(params.id);
 
   if (!coach) {
@@ -28,30 +33,30 @@ export default function CoachPage({ params, searchParams }: CoachPageProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-                <Link href="#">Train {train?.trainNumber}</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Coach {coach.coachNumber}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={() => router.back()}>
+                <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+                <h1 className="text-xl font-bold">Coach {coach.coachNumber}</h1>
+                <p className="text-xs text-muted-foreground">{train?.trainNumber} {train?.name}</p>
+            </div>
+        </div>
+        <div className="flex items-center gap-1">
+             <div className="flex items-center gap-1 text-xs font-medium text-green-400 mr-2">
+                <Wifi className="h-4 w-4" />
+                Synced
+            </div>
+            <Button variant="ghost" size="icon">
+                <Search className="h-5 w-5" />
+            </Button>
+            <Button variant="ghost" size="icon">
+                <MoreVertical className="h-5 w-5" />
+            </Button>
+        </div>
+      </div>
       
-      <h1 className="text-3xl font-bold tracking-tight">
-        Coach {coach.coachNumber} <span className="text-muted-foreground font-normal">({train?.name})</span>
-      </h1>
-
       <CoachView coach={coach} initialSeatId={initialSeatId} />
     </div>
   );

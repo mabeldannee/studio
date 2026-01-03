@@ -1,43 +1,17 @@
+
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Bot, BarChart, CheckCircle, Users, HelpCircle, XCircle } from 'lucide-react';
+import { Bot, UserCheck, TicketCheck, XCircle, Users } from 'lucide-react';
 import { aiSummarizeCoach } from '@/ai/flows/ai-summarize-coach';
 import type { Coach, Seat } from '@/lib/types';
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  ChartConfig,
-} from "@/components/ui/chart";
-import { Bar, BarChart as RechartsBarChart, XAxis, YAxis } from "recharts";
 
 interface AISummaryProps {
   coach: Coach;
   seats: Seat[];
 }
-
-const chartConfig = {
-  verified: {
-    label: "Verified",
-    color: "hsl(var(--chart-1))",
-  },
-  presence: {
-    label: "Presence",
-    color: "hsl(var(--chart-2))",
-  },
-  unverified: {
-    label: "Unverified",
-    color: "hsl(var(--chart-4))",
-  },
-  vacant: {
-    label: "Vacant",
-    color: "hsl(var(--muted))",
-  },
-} satisfies ChartConfig;
-
 
 export function AISummary({ coach, seats }: AISummaryProps) {
   const [summary, setSummary] = useState<string | null>(null);
@@ -51,25 +25,18 @@ export function AISummary({ coach, seats }: AISummaryProps) {
   }, [seats]);
 
 
-  const chartData = useMemo(() => [
-    {
-      status: "Seats",
-      verified: seatsByStatus['Ticket Verified'] || 0,
-      presence: seatsByStatus['Presence Confirmed'] || 0,
-      unverified: seatsByStatus['Unverified Presence'] || 0,
-      vacant: seatsByStatus['Likely Vacant'] || 0,
-    },
-  ], [seatsByStatus]);
-
   useEffect(() => {
     const fetchSummary = async () => {
       setIsLoading(true);
       try {
         const verifiedCount = seatsByStatus['Ticket Verified'] || 0;
         const presenceCount = seatsByStatus['Presence Confirmed'] || 0;
+        const unverifiedCount = seatsByStatus['Unverified Presence'] || 0;
+        const vacantCount = seatsByStatus['Likely Vacant'] || 0;
+        const totalSeats = seats.length;
 
-        const coachOverview = `Coach ${coach.coachNumber} has an occupancy of ${coach.occupancy}%. Verified: ${verifiedCount}, Presence Confirmed: ${presenceCount}.`;
-        const riskHotspots = `High-risk seats are those with 'Presence Confirmed' status. There are ${presenceCount} such seats.`;
+        const coachOverview = `Coach ${coach.coachNumber} has ${totalSeats} total seats. Statuses: ${verifiedCount} verified, ${presenceCount} with confirmed presence, ${unverifiedCount} unverified, ${vacantCount} vacant.`;
+        const riskHotspots = `High-risk seats are those with 'Presence Confirmed' or 'Unverified Presence' status. There are ${presenceCount + unverifiedCount} such seats.`;
         const suggestedCheckOrder = 'Prioritize seats with confirmed presence, then unverified, and finally vacant seats.';
 
         const result = await aiSummarizeCoach({
@@ -86,58 +53,51 @@ export function AISummary({ coach, seats }: AISummaryProps) {
     };
 
     fetchSummary();
-  }, [coach.coachNumber, coach.occupancy, seatsByStatus]);
+  }, [coach.coachNumber, coach.occupancy, seats, seatsByStatus]);
+  
+  const totalSeats = seats.length;
+  const verifiedSeats = seatsByStatus['Ticket Verified'] || 0;
+  const checkSeats = (seatsByStatus['Presence Confirmed'] || 0) + (seatsByStatus['Unverified Presence'] || 0);
+  const vacantSeats = seatsByStatus['Likely Vacant'] || 0;
 
   return (
-    <>
-      <Card className="sm:col-span-2">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Bot className="h-5 w-5 text-primary" />
-            AI Coach Summary
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">{summary}</p>
-          )}
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="pb-2">
-            <CardDescription>Occupancy</CardDescription>
-            <CardTitle className="text-3xl">{coach.occupancy}%</CardTitle>
-        </CardHeader>
-        <CardContent>
-            <ChartContainer config={chartConfig} className="h-[50px] w-full">
-                <RechartsBarChart accessibilityLayer data={chartData} layout="vertical" margin={{ left: 0, right: 0, top:0, bottom: 0}}>
-                    <XAxis type="number" hide />
-                    <YAxis type="category" dataKey="status" hide />
-                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                    <Bar dataKey="verified" stackId="a" fill="var(--color-verified)" radius={[5,0,0,5]} />
-                    <Bar dataKey="presence" stackId="a" fill="var(--color-presence)" />
-                    <Bar dataKey="unverified" stackId="a" fill="var(--color-unverified)" />
-                    <Bar dataKey="vacant" stackId="a" fill="var(--color-vacant)" radius={[0,5,5,0]} />
-                </RechartsBarChart>
-            </ChartContainer>
-        </CardContent>
-      </Card>
-
-      <Card>
-         <CardHeader className="pb-2">
-            <CardDescription>Hotspots</CardDescription>
-            <CardTitle className="text-3xl text-destructive">{seatsByStatus['Presence Confirmed'] || 0}</CardTitle>
-        </CardHeader>
-        <CardContent>
-            <div className="text-xs text-muted-foreground">Seats with unverified presence.</div>
-        </CardContent>
-      </Card>
-    </>
+     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">TOTAL</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{totalSeats}</div>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">VERIFIED</CardTitle>
+                <UserCheck className="h-4 w-4 text-green-500" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{verifiedSeats}</div>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">CHECK</CardTitle>
+                <TicketCheck className="h-4 w-4 text-yellow-500" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{checkSeats}</div>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">VACANT</CardTitle>
+                <XCircle className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{vacantSeats}</div>
+            </CardContent>
+        </Card>
+     </div>
   );
 }

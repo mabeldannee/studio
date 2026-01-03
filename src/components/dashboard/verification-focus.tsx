@@ -1,7 +1,8 @@
 
+
 'use client';
 
-import type { Train, Seat } from '@/lib/types';
+import type { Train, Seat, Alert as AlertType } from '@/lib/types';
 import {
   Card,
   CardContent,
@@ -10,8 +11,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, ArrowRight, ShieldAlert, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Eye, ArrowRight, ShieldAlert, AlertTriangle, CheckCircle, Wifi } from 'lucide-react';
 import Link from 'next/link';
+import { Badge } from '../ui/badge';
+import { cn } from '@/lib/utils';
 
 interface VerificationFocusProps {
   trains: Train[];
@@ -19,81 +22,61 @@ interface VerificationFocusProps {
 
 type PrioritySeat = Seat & { trainNumber: string; coachId: string };
 
+const getAlerts = (trains: Train[]) => {
+    const allAlerts: AlertType[] = trains.flatMap(train => train.alerts);
+    const highPriority = allAlerts.filter(a => a.urgency === 'high');
+    const mediumPriority = allAlerts.filter(a => a.urgency === 'medium');
+    const lowPriority = allAlerts.filter(a => a.urgency === 'low');
+    return { highPriority, mediumPriority, lowPriority, allAlerts };
+}
+
+const alertBadges = {
+    high: 'destructive',
+    medium: 'secondary',
+    low: 'outline',
+} as const;
+
 export function VerificationFocus({ trains }: VerificationFocusProps) {
-  const allSeats: PrioritySeat[] = trains.flatMap(train =>
-    train.coaches.flatMap(coach =>
-      coach.seats.map(seat => ({
-        ...seat,
-        trainNumber: train.trainNumber,
-        coachId: coach.id,
-      }))
-    )
-  );
-
-  const getPrioritySeats = (priority: 'High' | 'Medium' | 'Low') => {
-    switch (priority) {
-      case 'High':
-        return allSeats
-          .filter(
-            s =>
-              s.status === 'Presence Confirmed' &&
-              (s.presenceConfidence === 'Late' || s.presenceConfidence === 'Anomalous')
-          )
-          .sort((a, b) => b.suspiciousPatternScore - a.suspiciousPatternScore);
-      case 'Medium':
-        return allSeats.filter(s => s.status === 'Unverified Presence');
-      case 'Low':
-        return allSeats.filter(s => s.status === 'Likely Vacant');
-      default:
-        return [];
-    }
-  };
-
-  const highPrioritySeats = getPrioritySeats('High');
-  const mediumPrioritySeats = getPrioritySeats('Medium');
-
-  const renderSeatList = (seats: PrioritySeat[], max: number) => {
-    if (seats.length === 0) {
-      return <p className="text-sm text-muted-foreground">No seats match this priority.</p>;
-    }
-    return seats.slice(0, max).map(seat => (
-      <div key={seat.id} className="flex items-center justify-between text-sm">
-        <div>
-          <span className="font-semibold">Seat {seat.seatNumber}</span>
-          <span className="text-muted-foreground"> (Train {seat.trainNumber})</span>
-        </div>
-        <Button variant="ghost" size="sm" asChild>
-          <Link href={`/dashboard/coach/${seat.coachId}?seat=${seat.id}`}>
-            View <ArrowRight className="h-3 w-3 ml-1" />
-          </Link>
-        </Button>
-      </div>
-    ));
-  };
+  const { highPriority, allAlerts } = getAlerts(trains);
 
   return (
     <Card className="lg:col-span-12">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Eye className="text-primary" />
-          Verification Focus
+          Priority Alerts
         </CardTitle>
-        <CardDescription>
-          AI-prioritized seats for verification based on presence intelligence.
-        </CardDescription>
+         <p className="text-sm text-muted-foreground">Last synced: just now</p>
       </CardHeader>
       <CardContent className="grid gap-6 md:grid-cols-2">
-        <div className="space-y-4">
-          <h3 className="font-semibold flex items-center gap-2 text-destructive">
-            <ShieldAlert className="h-5 w-5" /> High Priority
-          </h3>
-          <div className="space-y-2">{renderSeatList(highPrioritySeats, 3)}</div>
+        <div className="space-y-2">
+          <p className='font-bold'>{highPriority.length}</p>
+          <p className="text-sm text-muted-foreground">Pending</p>
         </div>
+        <div className="space-y-2">
+           <p className='font-bold text-destructive'>{allAlerts.filter(a => a.urgency === 'high').length}</p>
+          <p className="text-sm text-muted-foreground">High Priority</p>
+        </div>
+      </CardContent>
+      <CardContent>
+        <h3 className="font-semibold mb-4">CURRENT ALERTS</h3>
         <div className="space-y-4">
-          <h3 className="font-semibold flex items-center gap-2 text-yellow-600">
-            <AlertTriangle className="h-5 w-5" /> Medium Priority
-          </h3>
-          <div className="space-y-2">{renderSeatList(mediumPrioritySeats, 3)}</div>
+            {allAlerts.slice(0,3).map(alert => (
+                 <div key={alert.id} className="p-3 bg-muted/50 rounded-lg flex items-center justify-between">
+                    <div>
+                        <div className='flex items-center gap-2'>
+                            {alert.seatId && <p className="font-bold">{alert.seatId.replace(alert.coachId+'-', '')}</p>}
+                             <Badge variant={alertBadges[alert.urgency]}>{alert.urgency}</Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{alert.description}</p>
+                    </div>
+                    {alert.seatId && (
+                         <Button asChild variant="outline" size="sm">
+                            <Link href={`/dashboard/coach/${alert.coachId}?seat=${alert.seatId}`}>View Seat</Link>
+                        </Button>
+                    )}
+                 </div>
+            ))}
         </div>
       </CardContent>
     </Card>

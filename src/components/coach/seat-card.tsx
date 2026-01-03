@@ -1,30 +1,32 @@
+
 "use client";
 
 import { cva, type VariantProps } from 'class-variance-authority';
 import type { Seat } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Clock, AlertTriangle } from 'lucide-react';
+import { Clock, AlertTriangle, User, UserCheck, Ticket, X } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 const seatVariants = cva(
-  'w-full aspect-square flex items-center justify-center rounded-md font-bold text-sm border-2 transition-all hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 relative',
+  'w-full aspect-[4/5] flex flex-col items-center justify-center rounded-md p-1 text-sm border-2 transition-all hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 relative',
   {
     variants: {
       status: {
-        'Ticket Verified': 'bg-green-100 border-green-300 text-green-800 dark:bg-green-900/50 dark:border-green-700 dark:text-green-300',
-        'Presence Confirmed': 'bg-blue-100 border-blue-300 text-blue-800 dark:bg-blue-900/50 dark:border-blue-700 dark:text-blue-300',
-        'Unverified Presence': 'bg-yellow-100 border-yellow-300 text-yellow-800 dark:bg-yellow-900/50 dark:border-yellow-700 dark:text-yellow-300',
-        'Likely Vacant': 'bg-gray-100 border-gray-300 text-gray-500 dark:bg-gray-800/80 dark:border-gray-700 dark:text-gray-400',
+        'Ticket Verified': 'bg-green-500/10 border-green-500/30 text-green-400',
+        'Presence Confirmed': 'bg-blue-500/10 border-blue-500/30 text-blue-400',
+        'Unverified Presence': 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400',
+        'Likely Vacant': 'bg-muted/50 border-border text-muted-foreground',
       },
     },
   }
 );
 
-const confidenceIndicator = {
-    'Early': <Clock className="h-3 w-3 text-blue-600" />,
-    'Late': <Clock className="h-3 w-3 text-orange-500" />,
-    'Anomalous': <AlertTriangle className="h-3 w-3 text-red-500" />,
+const statusIcons = {
+    'Ticket Verified': <UserCheck className="h-4 w-4" />,
+    'Presence Confirmed': <User className="h-4 w-4" />,
+    'Unverified Presence': <Ticket className="h-4 w-4" />,
+    'Likely Vacant': <X className="h-4 w-4" />,
 }
 
 interface SeatCardProps extends VariantProps<typeof seatVariants> {
@@ -35,7 +37,7 @@ interface SeatCardProps extends VariantProps<typeof seatVariants> {
 export function SeatCard({ seat, onSelect }: SeatCardProps) {
   const seatNumberOnly = seat.seatNumber.split('-').pop() || '';
   return (
-    <TooltipProvider delayDuration={0}>
+    <TooltipProvider delayDuration={100}>
         <Tooltip>
             <TooltipTrigger asChild>
                 <button
@@ -43,19 +45,21 @@ export function SeatCard({ seat, onSelect }: SeatCardProps) {
                 className={cn(seatVariants({ status: seat.status }))}
                 aria-label={`Seat ${seat.seatNumber}, Status: ${seat.status}`}
                 >
-                {seatNumberOnly}
-                {seat.status === 'Presence Confirmed' && seat.presenceConfidence && (
-                    <div className="absolute top-1 right-1">
-                        {confidenceIndicator[seat.presenceConfidence]}
-                    </div>
-                )}
+                <div className="flex justify-between w-full px-1">
+                    <p className="font-bold text-base">{seatNumberOnly}</p>
+                    {seat.berth && <p className="text-xs">{seat.berth}</p>}
+                </div>
+                <div className="flex-grow flex flex-col items-center justify-center">
+                    {statusIcons[seat.status]}
+                </div>
+                <div className="text-xs truncate w-full px-1 text-center font-mono">{seat.passenger?.name || '...'}</div>
                 </button>
             </TooltipTrigger>
             <TooltipContent>
                 <p className="font-bold">Seat {seat.seatNumber}</p>
                 <p>Status: {seat.status}</p>
-                {seat.presenceConfidence && <p>Confidence: {seat.presenceConfidence}</p>}
-                {seat.presenceTimestamp && <p>Time: {formatDistanceToNow(new Date(seat.presenceTimestamp), { addSuffix: true })}</p>}
+                {seat.passenger && <p>Passenger: {seat.passenger.name}</p>}
+                {seat.lastUpdated && <p>Updated: {formatDistanceToNow(new Date(seat.lastUpdated), { addSuffix: true })}</p>}
             </TooltipContent>
         </Tooltip>
     </TooltipProvider>

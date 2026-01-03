@@ -1,8 +1,9 @@
 
+
 'use client';
 
 import { AuthGuard } from '@/components/dashboard/auth-guard';
-import { Home, ClipboardList, User, BarChart, Bell, List, Wrench } from 'lucide-react';
+import { Home, ClipboardList, User, BarChart, Bell, List, Wrench, Search, Users } from 'lucide-react';
 import Link from 'next/link';
 import { Header } from '@/components/dashboard/header';
 import { usePathname } from 'next/navigation';
@@ -30,9 +31,10 @@ export default function DashboardLayout({
   }, []);
 
   const tteNavItems = [
-    { href: '/dashboard/home', icon: Home, label: 'Alerts' },
+    { href: '/dashboard/home', icon: Bell, label: 'Alerts' },
     { href: '#', icon: ClipboardList, label: 'Manifest' },
-    { href: '#', icon: BarChart, label: 'Summary' },
+    { href: '#', icon: Users, label: 'Reallocate' },
+    { href: '#', icon: Search, label: 'Search' },
     { href: '/login', icon: User, label: 'Profile' },
   ];
 
@@ -40,7 +42,7 @@ export default function DashboardLayout({
       { href: '/dashboard/obhs', icon: Wrench, label: 'Requests' },
       { href: '#', icon: List, label: 'Activity Log' },
       { href: '#', icon: Bell, label: 'Alerts' },
-      { href: '#', icon: User, label: 'Profile' },
+      { href: '/login', icon: User, label: 'Profile' },
   ];
 
   const navItems = role === 'OBHS' ? obhsNavItems : tteNavItems;
@@ -56,14 +58,14 @@ export default function DashboardLayout({
         <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border/50 p-2 shadow-[0_-1px_10px_rgba(0,0,0,0.05)]">
             <nav className="flex justify-around items-center max-w-md mx-auto">
                 {navItems.map((item) => {
-                    const isActive = pathname === item.href || (item.href === defaultHome && pathname.startsWith('/dashboard'));
+                    const isActive = pathname === item.href || (item.href === defaultHome && pathname.startsWith('/dashboard') && !pathname.includes('/coach'));
                     return (
                         <Link
                           key={item.label}
                           href={item.href}
                           className={cn(
-                            'flex flex-col items-center gap-1 w-16 transition-colors',
-                            isActive ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+                            'flex flex-col items-center justify-center gap-1 w-16 h-14 rounded-md transition-colors',
+                            isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted/50 hover:text-primary'
                           )}
                         >
                           <item.icon className="h-6 w-6" />
