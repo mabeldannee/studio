@@ -13,6 +13,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { AcknowledgeRequestDialog } from '@/components/obhs/acknowledge-request-dialog';
 import { CompleteRequestDialog } from '@/components/obhs/complete-request-dialog';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const serviceIcons = { Food: Utensils, Clean: Sparkles, Medical: PlusSquare, Help: Headset };
 const statusColors: Record<ServiceRequestStatus, string> = {
