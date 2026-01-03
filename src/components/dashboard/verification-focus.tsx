@@ -39,7 +39,7 @@ const alertConfig = {
         icon: UserX,
         badge: 'Med Conf.',
         badgeClass: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-        buttonText: 'Mark Vacant'
+        buttonText: 'View Seat'
     },
     'Ticket not scanned at entry': {
         icon: Ticket,
