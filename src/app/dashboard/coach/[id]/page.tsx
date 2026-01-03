@@ -21,6 +21,8 @@ export default function CoachPage() {
 
   const train = findTrain(coach.trainId);
   const initialSeatId = searchParams.get('seat') || undefined;
+  const highlightSeatId = searchParams.get('highlight') || undefined;
+
 
   return (
     <div className="flex flex-col gap-4">
@@ -44,7 +46,7 @@ export default function CoachPage() {
         </div>
       </div>
       
-      <CoachView coach={coach} initialSeatId={initialSeatId} />
+      <CoachView coach={coach} initialSeatId={initialSeatId} highlightSeatId={highlightSeatId} />
     </div>
   );
 }

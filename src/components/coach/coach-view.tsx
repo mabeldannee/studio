@@ -11,9 +11,10 @@ import { SeatDetailsSheet } from '@/components/coach/seat-details-sheet';
 interface CoachViewProps {
   coach: Coach;
   initialSeatId?: string;
+  highlightSeatId?: string;
 }
 
-export function CoachView({ coach, initialSeatId }: CoachViewProps) {
+export function CoachView({ coach, initialSeatId, highlightSeatId }: CoachViewProps) {
   const [seats, setSeats] = useState<Seat[]>(coach.seats);
   const [selectedSeat, setSelectedSeat] = useState<Seat | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -58,7 +59,7 @@ export function CoachView({ coach, initialSeatId }: CoachViewProps) {
     <div className="grid gap-4 md:gap-8">
         <AISummary coach={coach} seats={seats} />
         {/* <SmartCheck seats={seats} setSeats={setSeats} occupancyRate={coach.occupancy} /> */}
-        <SeatGrid seats={seats} onSeatSelect={handleSeatSelect} />
+        <SeatGrid seats={seats} onSeatSelect={handleSeatSelect} highlightedSeatId={highlightSeatId} />
       
       <SeatDetailsSheet
         seat={selectedSeat}

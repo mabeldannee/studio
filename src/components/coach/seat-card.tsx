@@ -32,9 +32,10 @@ const statusIcons = {
 interface SeatCardProps extends VariantProps<typeof seatVariants> {
   seat: Seat;
   onSelect: (seat: Seat) => void;
+  isHighlighted?: boolean;
 }
 
-export function SeatCard({ seat, onSelect }: SeatCardProps) {
+export function SeatCard({ seat, onSelect, isHighlighted }: SeatCardProps) {
   const seatNumberOnly = seat.seatNumber.split('-').pop() || '';
   return (
     <TooltipProvider delayDuration={100}>
@@ -42,7 +43,7 @@ export function SeatCard({ seat, onSelect }: SeatCardProps) {
             <TooltipTrigger asChild>
                 <button
                 onClick={() => onSelect(seat)}
-                className={cn(seatVariants({ status: seat.status }))}
+                className={cn(seatVariants({ status: seat.status }), isHighlighted && "ring-2 ring-offset-2 ring-primary ring-offset-background")}
                 aria-label={`Seat ${seat.seatNumber}, Status: ${seat.status}`}
                 >
                 <div className="flex justify-between w-full px-1">
