@@ -2,6 +2,9 @@
 'use client';
 
 import {
+  useState
+} from 'react';
+import {
   ArrowLeft,
   Wifi,
   X,
@@ -11,37 +14,62 @@ import {
   TrendingUp,
   Info,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useRouter } from 'next/navigation';
+import {
+  Button
+} from '@/components/ui/button';
+import {
+  Badge
+} from '@/components/ui/badge';
+import {
+  useRouter
+} from 'next/navigation';
+import {
+  useToast
+} from '@/hooks/use-toast';
 
-const highConfidenceMatches = [
-  {
-    vacantSeat: 'S5 - 12',
-    berth: 'UPPER',
-    reason: 'NO SHOW (2 Stations Passed)',
-    reasonIcon: Ban,
-    reasonColor: 'text-red-400',
-    candidateName: 'R. Sharma (M, 34)',
-    pnr: '829-441-9921',
-    status: 'RAC 3',
-    statusVariant: 'secondary',
-  },
-  {
-    vacantSeat: 'B2 - 31',
-    berth: 'SIDE LOWER',
-    reason: 'Last Minute Cancellation',
-    reasonIcon: TrendingUp,
-    reasonColor: 'text-orange-400',
-    candidateName: 'Anjali Singh (F, 28)',
-    pnr: '221-009-1123',
-    status: 'WL 1',
-    statusVariant: 'destructive',
-  },
-];
+const initialMatches = [{
+  id: 1,
+  vacantSeat: 'S5 - 12',
+  berth: 'UPPER',
+  reason: 'NO SHOW (2 Stations Passed)',
+  reasonIcon: Ban,
+  reasonColor: 'text-red-400',
+  candidateName: 'R. Sharma (M, 34)',
+  pnr: '829-441-9921',
+  status: 'RAC 3',
+  statusVariant: 'secondary',
+}, {
+  id: 2,
+  vacantSeat: 'B2 - 31',
+  berth: 'SIDE LOWER',
+  reason: 'Last Minute Cancellation',
+  reasonIcon: TrendingUp,
+  reasonColor: 'text-orange-400',
+  candidateName: 'Anjali Singh (F, 28)',
+  pnr: '221-009-1123',
+  status: 'WL 1',
+  statusVariant: 'destructive',
+}, ];
 
 export default function ReallocationPage() {
   const router = useRouter();
+  const {
+    toast
+  } = useToast();
+  const [matches, setMatches] = useState(initialMatches);
+
+  const handleConfirm = (matchId: number) => {
+    setMatches((prevMatches) => prevMatches.filter((match) => match.id !== matchId));
+    toast({
+      title: 'Reallocation Confirmed',
+      description: 'The seat has been reallocated and dashboard has been updated.',
+    });
+  };
+
+  const handleDismiss = (matchId: number) => {
+    setMatches((prevMatches) => prevMatches.filter((match) => match.id !== matchId));
+  }
+
 
   return (
     <div className="flex flex-col gap-4">
@@ -94,8 +122,8 @@ export default function ReallocationPage() {
           <Star className="h-4 w-4" /> HIGH CONFIDENCE MATCHES
         </h2>
 
-        {highConfidenceMatches.map((match, index) => (
-          <div key={index} className="rounded-lg border bg-card p-4 space-y-4">
+        {matches.map((match) => (
+          <div key={match.id} className="rounded-lg border bg-card p-4 space-y-4">
             {/* Vacant Seat Info */}
             <div className="flex justify-between items-start">
               <div>
@@ -137,16 +165,22 @@ export default function ReallocationPage() {
 
             {/* Actions */}
             <div className="grid grid-cols-3 gap-2">
-              <Button variant="outline" size="icon" className="col-span-1">
+              <Button variant="outline" size="icon" className="col-span-1" onClick={() => handleDismiss(match.id)}>
                 <X className="h-4 w-4" />
               </Button>
-              <Button className="col-span-2">
+              <Button className="col-span-2" onClick={() => handleConfirm(match.id)}>
                 <Check className="mr-2 h-4 w-4" />
                 Confirm Reallocation
               </Button>
             </div>
           </div>
         ))}
+
+        {matches.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+              No high confidence matches to display.
+          </div>
+        )}
       </div>
 
       {/* Advisory Footer */}
@@ -160,3 +194,4 @@ export default function ReallocationPage() {
     </div>
   );
 }
+
