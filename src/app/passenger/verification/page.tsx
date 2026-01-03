@@ -135,4 +135,11 @@ export default function VerificationStatusPage() {
                             </AccordionTrigger>
                             <AccordionContent className="bg-card p-4 rounded-b-lg">
                                 This section explains the two-step verification process, emphasizing the difference between digital presence confirmation and physical ticket validation by the TTE.
-                            </A
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+                </main>
+            </div>
+        </div>
+    );
+}

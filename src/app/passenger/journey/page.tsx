@@ -170,4 +170,8 @@ export default function JourneyPage() {
               staff for critical decisions.
             </p>
           </div>
-        </main
+        </main>
+      </div>
+    </div>
+  );
+}
