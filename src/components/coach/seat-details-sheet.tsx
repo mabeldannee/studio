@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import type { Seat, SeatStatus } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
-import { Bot, Loader2, ShieldAlert, Check, AlertTriangle, UserCheck, HelpCircle, UserX, UserRoundCog } from 'lucide-react';
+import { Bot, Loader2, ShieldAlert, Check, AlertTriangle, UserCheck, HelpCircle, UserX, UserRoundCog, Ban, Replace, WifiOff } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { explainAlert } from '@/ai/flows/explain-alerts';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
@@ -97,6 +97,12 @@ export function SeatDetailsSheet({ seat, isOpen, onOpenChange, onUpdateStatus }:
     onOpenChange(false);
   };
   
+  const actionIcons = {
+      'Ticket Verified': UserCheck,
+      'Unauthorized': Ban,
+      'Moved / Reassigned': Replace,
+  }
+
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-md flex flex-col p-0">
@@ -120,9 +126,11 @@ export function SeatDetailsSheet({ seat, isOpen, onOpenChange, onUpdateStatus }:
                     {seat.status}
                 </Badge>
             </div>
-             <Alert variant="warning" className="bg-orange-500/10 border-orange-500/20 text-orange-500">
+             <Alert variant="default" className="bg-yellow-500/10 border-yellow-500/20 text-yellow-400">
+                <WifiOff className="h-4 w-4 text-yellow-400" />
+                <AlertTitle>Offline Mode</AlertTitle>
                 <AlertDescription>
-                    Offline Mode: Changes will be queued and synced when online.
+                    Changes will be queued and synced when online.
                 </AlertDescription>
             </Alert>
         </div>
@@ -153,28 +161,34 @@ export function SeatDetailsSheet({ seat, isOpen, onOpenChange, onUpdateStatus }:
                 <h4 className="text-sm font-semibold text-muted-foreground">Select Action</h4>
                 <RadioGroup value={selectedAction} onValueChange={(v) => setSelectedAction(v as Action)}>
                     <Label htmlFor='action-verified' className={cn("flex items-center gap-3 p-3 rounded-lg border-2", selectedAction === 'Ticket Verified' ? "border-primary bg-primary/5" : "border-border")}>
-                        <RadioGroupItem value="Ticket Verified" id="action-verified" />
-                         <UserCheck className="h-5 w-5 text-primary" />
+                        <div className={cn("h-8 w-8 rounded-full flex items-center justify-center", selectedAction === 'Ticket Verified' ? "bg-green-500" : "bg-muted")}>
+                           <UserCheck className={cn("h-5 w-5", selectedAction === 'Ticket Verified' ? "text-white" : "text-muted-foreground")} />
+                        </div>
                         <div>
                             <p className="font-semibold">Ticket Verified</p>
                             <p className="text-xs text-muted-foreground">Passenger present, ID valid</p>
                         </div>
+                        <RadioGroupItem value="Ticket Verified" id="action-verified" className='ml-auto' />
                     </Label>
                     <Label htmlFor='action-unauthorized' className={cn("flex items-center gap-3 p-3 rounded-lg border-2", selectedAction === 'Unauthorized' ? "border-primary bg-primary/5" : "border-border")}>
-                        <RadioGroupItem value="Unauthorized" id="action-unauthorized" />
-                        <UserX className="h-5 w-5 text-primary" />
+                         <div className={cn("h-8 w-8 rounded-full flex items-center justify-center", selectedAction === 'Unauthorized' ? "bg-red-500" : "bg-muted")}>
+                           <Ban className={cn("h-5 w-5", selectedAction === 'Unauthorized' ? "text-white" : "text-muted-foreground")} />
+                        </div>
                         <div>
                             <p className="font-semibold">Unauthorized</p>
                             <p className="text-xs text-muted-foreground">No ticket or invalid ticket</p>
                         </div>
+                        <RadioGroupItem value="Unauthorized" id="action-unauthorized" className='ml-auto' />
                     </Label>
                     <Label htmlFor='action-reassigned' className={cn("flex items-center gap-3 p-3 rounded-lg border-2", selectedAction === 'Moved / Reassigned' ? "border-primary bg-primary/5" : "border-border")}>
-                        <RadioGroupItem value="Moved / Reassigned" id="action-reassigned" />
-                        <UserRoundCog className="h-5 w-5 text-primary" />
+                         <div className={cn("h-8 w-8 rounded-full flex items-center justify-center", selectedAction === 'Moved / Reassigned' ? "bg-yellow-500" : "bg-muted")}>
+                           <Replace className={cn("h-5 w-5", selectedAction === 'Moved / Reassigned' ? "text-white" : "text-muted-foreground")} />
+                        </div>
                         <div>
                             <p className="font-semibold">Moved / Reassigned</p>
                             <p className="text-xs text-muted-foreground">Swapped seats or upgraded</p>
                         </div>
+                        <RadioGroupItem value="Moved / Reassigned" id="action-reassigned" className='ml-auto' />
                     </Label>
                 </RadioGroup>
            </div>

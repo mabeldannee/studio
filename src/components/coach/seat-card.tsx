@@ -16,7 +16,7 @@ const seatVariants = cva(
         'Ticket Verified': 'bg-green-500/10 border-green-500/30 text-green-400',
         'Presence Confirmed': 'bg-blue-500/10 border-blue-500/30 text-blue-400',
         'Unverified Presence': 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400',
-        'Likely Vacant': 'bg-muted/50 border-border text-muted-foreground',
+        'Likely Vacant': 'bg-red-500/10 border-red-500/30 text-red-400',
       },
     },
   }
@@ -47,7 +47,7 @@ export function SeatCard({ seat, onSelect }: SeatCardProps) {
                 >
                 <div className="flex justify-between w-full px-1">
                     <p className="font-bold text-base">{seatNumberOnly}</p>
-                    {seat.berth && <p className="text-xs">{seat.berth}</p>}
+                    {seat.berth && <p className="text-xs">{seat.berth?.charAt(0).toUpperCase() + (seat.berth?.split(' ')[1]?.charAt(0).toUpperCase() || '')}</p>}
                 </div>
                 <div className="flex-grow flex flex-col items-center justify-center">
                     {statusIcons[seat.status]}

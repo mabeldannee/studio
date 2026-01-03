@@ -61,7 +61,7 @@ export function AISummary({ coach, seats }: AISummaryProps) {
   const vacantSeats = seatsByStatus['Likely Vacant'] || 0;
 
   return (
-     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+     <div className="grid grid-cols-4 gap-4">
         <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">TOTAL</CardTitle>
@@ -73,8 +73,8 @@ export function AISummary({ coach, seats }: AISummaryProps) {
         </Card>
         <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">VERIFIED</CardTitle>
-                <UserCheck className="h-4 w-4 text-green-500" />
+                <CardTitle className="text-sm font-medium text-green-400">VERIFIED</CardTitle>
+                <UserCheck className="h-4 w-4 text-green-400" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{verifiedSeats}</div>
@@ -82,8 +82,8 @@ export function AISummary({ coach, seats }: AISummaryProps) {
         </Card>
         <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">CHECK</CardTitle>
-                <TicketCheck className="h-4 w-4 text-yellow-500" />
+                <CardTitle className="text-sm font-medium text-yellow-400">CHECK</CardTitle>
+                <TicketCheck className="h-4 w-4 text-yellow-400" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{checkSeats}</div>
@@ -91,8 +91,8 @@ export function AISummary({ coach, seats }: AISummaryProps) {
         </Card>
         <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">VACANT</CardTitle>
-                <XCircle className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium text-red-400">VACANT</CardTitle>
+                <XCircle className="h-4 w-4 text-red-400" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{vacantSeats}</div>
