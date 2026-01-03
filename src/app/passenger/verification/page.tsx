@@ -13,15 +13,14 @@ export default function VerificationStatusPage() {
         <div className="min-h-screen bg-muted/30 flex justify-center">
             <div className="w-full max-w-md bg-background shadow-lg">
                 <header className="p-4 bg-background sticky top-0 z-10 border-b">
-                    <div className='relative flex items-center'>
-                         <Link href="/passenger/overview" passHref className='absolute'>
+                    <div className='relative flex items-center justify-center'>
+                         <Link href="/passenger/overview" passHref className='absolute left-0'>
                             <Button variant="ghost" size="icon">
                                 <ArrowLeft className="h-6 w-6" />
                             </Button>
                         </Link>
-                        <div className='text-center flex-grow'>
+                        <div className='text-center'>
                             <h1 className="font-bold text-lg">Verification Status</h1>
-                            <p className="text-sm text-muted-foreground">Passenger Details</p>
                         </div>
                     </div>
                 </header>
@@ -136,11 +135,4 @@ export default function VerificationStatusPage() {
                             </AccordionTrigger>
                             <AccordionContent className="bg-card p-4 rounded-b-lg">
                                 This section explains the two-step verification process, emphasizing the difference between digital presence confirmation and physical ticket validation by the TTE.
-                            </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-                </main>
-            </div>
-        </div>
-    );
-}
+                            </A
