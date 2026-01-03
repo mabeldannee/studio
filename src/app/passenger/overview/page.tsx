@@ -17,15 +17,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { ConfirmPresenceDialog } from '@/components/passenger/confirm-presence-dialog';
 
 export default function PassengerDashboardPage() {
-  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isPresenceConfirmed, setIsPresenceConfirmed] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleConfirm = () => {
-    setIsConfirmed(true);
+  const handleConfirmOnboard = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handlePresenceConfirmed = () => {
+    setIsPresenceConfirmed(true);
   };
 
   return (
+    <>
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 flex justify-center">
       <div className="w-full max-w-md bg-white dark:bg-black shadow-lg">
         <header className="p-4 flex justify-between items-center bg-white dark:bg-black sticky top-0 z-10 border-b">
@@ -114,7 +121,7 @@ export default function PassengerDashboardPage() {
                 <h2 className="text-5xl font-bold">45</h2>
                 <Badge variant="secondary" className="self-center">Lower Berth</Badge>
               </div>
-              {isConfirmed ? (
+              {isPresenceConfirmed ? (
                 <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 font-semibold text-sm p-2 rounded-md flex items-center justify-center gap-2">
                    <Check className="h-4 w-4" />
                    Presence Confirmed
@@ -155,11 +162,11 @@ export default function PassengerDashboardPage() {
           <div className="pt-2">
             <Button 
                 className="w-full text-base py-6"
-                onClick={handleConfirm}
-                disabled={isConfirmed}
+                onClick={handleConfirmOnboard}
+                disabled={isPresenceConfirmed}
             >
               <Check className="mr-2 h-5 w-5" />
-              {isConfirmed ? 'Presence Confirmed' : "Confirm I'm Onboard"}
+              {isPresenceConfirmed ? 'Presence Confirmed' : "Confirm I'm Onboard"}
             </Button>
             <p className="text-xs text-muted-foreground text-center mt-2 px-4">
               Helping TTEs manage occupancy. Optional. Does not replace physical ticket checking.
@@ -168,5 +175,11 @@ export default function PassengerDashboardPage() {
         </main>
       </div>
     </div>
+    <ConfirmPresenceDialog
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onConfirm={handlePresenceConfirmed}
+    />
+    </>
   );
 }
