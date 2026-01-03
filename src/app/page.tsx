@@ -21,20 +21,20 @@ export default function Home() {
           priority
         />
       )}
-      <div className="absolute inset-0 bg-black/70 z-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/80 to-black/90 z-10"></div>
 
       <div className="relative z-20 flex w-full max-w-lg flex-col items-center text-center text-white">
         
         {/* Header Content */}
-        <div className="mb-10">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Train className="h-8 w-8 text-primary" />
-            <span className="text-xl font-semibold tracking-wider">RailAssist AI</span>
+        <div className="mb-12">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <Train className="h-10 w-10 text-primary" />
+            <span className="text-3xl font-semibold tracking-wider">RailAssist AI</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-            The Future of Railway Operations is Here
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight">
+            The Future of Railway Operations
           </h1>
-          <p className="mt-4 text-lg text-slate-300">
+          <p className="mt-6 text-lg text-slate-300 max-w-xl mx-auto">
             Leveraging AI to streamline ticket verification, enhance passenger services, and provide real-time operational intelligence.
           </p>
         </div>
@@ -42,8 +42,8 @@ export default function Home() {
         {/* Login Cards */}
         <div className="w-full space-y-4">
             <Link href="/passenger-login" passHref>
-              <div className="group flex items-center gap-6 rounded-xl border border-white/20 bg-white/5 p-5 backdrop-blur-lg transition-all duration-300 hover:border-primary hover:bg-white/10 cursor-pointer">
-                <div className="rounded-full bg-primary/10 p-4 border border-primary/20">
+              <div className="group flex items-center gap-6 rounded-xl border border-white/20 bg-white/10 p-5 backdrop-blur-lg transition-all duration-300 hover:border-primary hover:bg-white/20 hover:scale-105 cursor-pointer">
+                <div className="rounded-lg bg-primary/10 p-4 border border-primary/20">
                   <User className="h-8 w-8 text-primary" />
                 </div>
                 <div>
@@ -52,13 +52,13 @@ export default function Home() {
                     Confirm presence and request assistance.
                   </p>
                 </div>
-                <ArrowRight className="ml-auto h-6 w-6 text-slate-500 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+                <ArrowRight className="ml-auto h-6 w-6 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
               </div>
             </Link>
 
             <Link href="/login" passHref>
-              <div className="group flex items-center gap-6 rounded-xl border border-white/20 bg-white/5 p-5 backdrop-blur-lg transition-all duration-300 hover:border-primary hover:bg-white/10 cursor-pointer">
-                <div className="rounded-full bg-primary/10 p-4 border border-primary/20">
+              <div className="group flex items-center gap-6 rounded-xl border border-white/20 bg-white/10 p-5 backdrop-blur-lg transition-all duration-300 hover:border-primary hover:bg-white/20 hover:scale-105 cursor-pointer">
+                <div className="rounded-lg bg-primary/10 p-4 border border-primary/20">
                   <UserCog className="h-8 w-8 text-primary" />
                 </div>
                 <div>
@@ -67,13 +67,13 @@ export default function Home() {
                     Access the AI-powered operational dashboard.
                   </p>
                 </div>
-                <ArrowRight className="ml-auto h-6 w-6 text-slate-500 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+                <ArrowRight className="ml-auto h-6 w-6 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
               </div>
             </Link>
 
             <Link href="/obhs-login" passHref>
-              <div className="group flex items-center gap-6 rounded-xl border border-white/20 bg-white/5 p-5 backdrop-blur-lg transition-all duration-300 hover:border-primary hover:bg-white/10 cursor-pointer">
-                <div className="rounded-full bg-primary/10 p-4 border border-primary/20">
+              <div className="group flex items-center gap-6 rounded-xl border border-white/20 bg-white/10 p-5 backdrop-blur-lg transition-all duration-300 hover:border-primary hover:bg-white/20 hover:scale-105 cursor-pointer">
+                <div className="rounded-lg bg-primary/10 p-4 border border-primary/20">
                   <Wrench className="h-8 w-8 text-primary" />
                 </div>
                 <div>
@@ -82,13 +82,13 @@ export default function Home() {
                     Manage passenger service requests.
                   </p>
                 </div>
-                <ArrowRight className="ml-auto h-6 w-6 text-slate-500 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+                <ArrowRight className="ml-auto h-6 w-6 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
               </div>
             </Link>
           </div>
       </div>
 
-      <footer className="absolute bottom-4 z-20 text-center text-xs text-slate-400">
+      <footer className="absolute bottom-6 z-20 text-center text-xs text-slate-400">
         Powered by Google Cloud
       </footer>
     </div>
