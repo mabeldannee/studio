@@ -18,18 +18,40 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ConfirmPresenceDialog } from '@/components/passenger/confirm-presence-dialog';
+import { ServiceRequestDialog } from '@/components/passenger/service-request-dialog';
+import type { ServiceRequestType } from '@/lib/types';
 
 export default function PassengerDashboardPage() {
   const [isPresenceConfirmed, setIsPresenceConfirmed] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isConfirmingPresence, setIsConfirmingPresence] = useState(false);
+  const [isRequestingService, setIsRequestingService] = useState(false);
+  const [serviceType, setServiceType] = useState<ServiceRequestType | null>(null);
 
   const handleConfirmOnboard = () => {
-    setIsDialogOpen(true);
+    setIsConfirmingPresence(true);
   };
 
   const handlePresenceConfirmed = () => {
     setIsPresenceConfirmed(true);
   };
+
+  const handleServiceRequest = (type: ServiceRequestType) => {
+    setServiceType(type);
+    setIsRequestingService(true);
+  };
+
+  const handleServiceRequestClose = () => {
+    setIsRequestingService(false);
+    setServiceType(null);
+  };
+
+  const serviceButtons: { type: ServiceRequestType; icon: React.ElementType; label: string }[] = [
+      { type: 'Food', icon: Utensils, label: 'Food' },
+      { type: 'Clean', icon: Sparkles, label: 'Clean' },
+      { type: 'Medical', icon: PlusSquare, label: 'Medical' },
+      { type: 'Help', icon: Headset, label: 'Help' },
+  ]
+
 
   return (
     <>
@@ -139,22 +161,12 @@ export default function PassengerDashboardPage() {
              <CardContent className="p-4">
                  <p className="text-sm font-semibold text-muted-foreground mb-3">ONBOARD SERVICES</p>
                  <div className="grid grid-cols-4 gap-2 text-center">
-                    <div className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted cursor-pointer">
-                        <Utensils className="h-6 w-6 text-primary" />
-                        <span className="text-xs">Food</span>
-                    </div>
-                     <div className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted cursor-pointer">
-                        <Sparkles className="h-6 w-6 text-primary" />
-                        <span className="text-xs">Clean</span>
-                    </div>
-                     <div className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted cursor-pointer">
-                        <PlusSquare className="h-6 w-6 text-primary" />
-                        <span className="text-xs">Medical</span>
-                    </div>
-                     <div className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted cursor-pointer">
-                        <Headset className="h-6 w-6 text-primary" />
-                        <span className="text-xs">Help</span>
-                    </div>
+                    {serviceButtons.map(service => (
+                        <button key={service.type} onClick={() => handleServiceRequest(service.type)} className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted cursor-pointer transition-colors">
+                            <service.icon className="h-6 w-6 text-primary" />
+                            <span className="text-xs">{service.label}</span>
+                        </button>
+                    ))}
                  </div>
              </CardContent>
           </Card>
@@ -176,9 +188,14 @@ export default function PassengerDashboardPage() {
       </div>
     </div>
     <ConfirmPresenceDialog
-        isOpen={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
+        isOpen={isConfirmingPresence}
+        onOpenChange={setIsConfirmingPresence}
         onConfirm={handlePresenceConfirmed}
+    />
+    <ServiceRequestDialog
+        isOpen={isRequestingService}
+        onOpenChange={handleServiceRequestClose}
+        serviceType={serviceType}
     />
     </>
   );

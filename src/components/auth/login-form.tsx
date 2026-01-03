@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -79,6 +80,7 @@ export function LoginForm() {
     // Simulate successful login
     if (typeof window !== "undefined") {
       localStorage.setItem("rail-assist-auth", "true");
+      localStorage.setItem("rail-assist-role", "TTE");
     }
 
     // Wait for user to see the AI message, then redirect

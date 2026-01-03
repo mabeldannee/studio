@@ -1,4 +1,5 @@
 
+
 export type PresenceConfidence = 'Early' | 'Late' | 'Anomalous';
 
 export type SeatStatus =
@@ -6,6 +7,21 @@ export type SeatStatus =
   | 'Presence Confirmed'
   | 'Unverified Presence'
   | 'Likely Vacant';
+
+export type ServiceRequestType = 'Food' | 'Clean' | 'Medical' | 'Help';
+export type ServiceRequestStatus = 'Pending' | 'Acknowledged' | 'Completed';
+export type ServiceRequestPriority = 'Low' | 'Medium' | 'High';
+
+
+export interface ServiceRequest {
+  id: string;
+  seatId: string;
+  type: ServiceRequestType;
+  status: ServiceRequestStatus;
+  priority: ServiceRequestPriority;
+  timeRaised: string;
+  details?: string; // e.g., for 'Clean', 'Washroom area'
+}
 
 export interface Seat {
   id: string;
@@ -26,6 +42,7 @@ export interface Coach {
   trainId: string;
   seats: Seat[];
   occupancy: number;
+  serviceRequests: ServiceRequest[];
 }
 
 export interface Train {

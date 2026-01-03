@@ -1,4 +1,5 @@
-import type { Train, Coach, Seat, Alert, SeatStatus, PresenceConfidence } from '@/lib/types';
+
+import type { Train, Coach, Seat, Alert, SeatStatus, PresenceConfidence, ServiceRequest } from '@/lib/types';
 
 const seatStatuses: SeatStatus[] = [
   'Ticket Verified',
@@ -10,6 +11,28 @@ const seatStatuses: SeatStatus[] = [
 const presenceConfidences: PresenceConfidence[] = ['Early', 'Late', 'Anomalous'];
 const presenceSources: Seat['presenceSource'][] = ['Passenger', 'Visual', 'Inference'];
 const stations = ['New Delhi', 'Kanpur', 'Allahabad', 'Mughalsarai'];
+const serviceRequestTypes: ServiceRequest['type'][] = ['Food', 'Clean', 'Medical', 'Help'];
+const serviceRequestStatuses: ServiceRequest['status'][] = ['Pending', 'Acknowledged', 'Completed'];
+
+const generateServiceRequests = (coachId: string, seats: Seat[]): ServiceRequest[] => {
+    const requests: ServiceRequest[] = [];
+    seats.forEach(seat => {
+        if (Math.random() < 0.1) { // 10% chance a seat has a request
+            const type = serviceRequestTypes[Math.floor(Math.random() * serviceRequestTypes.length)];
+            requests.push({
+                id: `req-${seat.id}-${type}`,
+                seatId: seat.id,
+                type,
+                status: serviceRequestStatuses[Math.floor(Math.random() * serviceRequestStatuses.length)],
+                priority: ['Low', 'Medium', 'High'][Math.floor(Math.random() * 3)] as ServiceRequest['priority'],
+                timeRaised: new Date(Date.now() - Math.random() * 1000 * 60 * 45).toISOString(),
+                details: type === 'Clean' ? 'Washroom area' : undefined
+            });
+        }
+    });
+    return requests;
+};
+
 
 const generateSeats = (coachId: string, count: number): Seat[] => {
   return Array.from({ length: count }, (_, i) => {
@@ -60,12 +83,14 @@ const generateCoaches = (trainId: string, coachNumbers: string[]): Coach[] => {
   return coachNumbers.map(coachNumber => {
     const seats = generateSeats(coachNumber, 72);
     const occupiedSeats = seats.filter(s => s.status !== 'Likely Vacant').length;
+    const serviceRequests = generateServiceRequests(coachNumber, seats);
     return {
       id: `${trainId}-${coachNumber}`,
       coachNumber,
       trainId,
       seats,
       occupancy: Math.round((occupiedSeats / seats.length) * 100),
+      serviceRequests,
     };
   });
 };
