@@ -17,19 +17,18 @@ export default function PassengerLoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+        <div className="flex min-h-screen items-center justify-center bg-background p-4">
             <div className="w-full max-w-md">
-                <div className="text-center text-gray-500 text-sm mb-2">Login / Entry Screen</div>
-                <div className="bg-white dark:bg-card rounded-xl shadow-lg p-6 sm:p-8 relative">
-                    <Link href="#" className="absolute top-4 right-4 flex items-center text-sm text-blue-600 hover:underline">
+                <div className="bg-card rounded-xl shadow-2xl shadow-primary/10 p-6 sm:p-8 relative border border-border">
+                    <Link href="#" className="absolute top-4 right-4 flex items-center text-sm text-muted-foreground hover:text-primary transition-colors">
                         <HelpCircle className="h-4 w-4 mr-1" />
                         Help
                     </Link>
                     <div className="flex flex-col items-start mb-6">
-                        <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg mb-4">
-                            <Train className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                        <div className="p-3 bg-primary/10 rounded-lg mb-4 border border-primary/20">
+                            <Train className="h-6 w-6 text-primary" />
                         </div>
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+                        <h1 className="text-3xl font-bold text-foreground tracking-tight">
                             Welcome Aboard
                         </h1>
                         <p className="text-muted-foreground mt-1">

@@ -33,9 +33,9 @@ export default function PassengerDashboardPage() {
 
   return (
     <>
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 flex justify-center">
-      <div className="w-full max-w-md bg-white dark:bg-black shadow-lg">
-        <header className="p-4 flex justify-between items-center bg-white dark:bg-black sticky top-0 z-10 border-b">
+    <div className="min-h-screen bg-muted/30 flex justify-center">
+      <div className="w-full max-w-md bg-background shadow-lg">
+        <header className="p-4 flex justify-between items-center bg-background sticky top-0 z-10 border-b">
           <Button variant="ghost" size="icon">
             <Menu className="h-6 w-6" />
           </Button>
@@ -58,7 +58,7 @@ export default function PassengerDashboardPage() {
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                     </span>
-                    <p className="font-semibold text-green-600">On Time</p>
+                    <p className="font-semibold text-green-400">On Time</p>
                   </div>
                   <p className="text-xs text-muted-foreground">Updated 2m ago</p>
                 </div>
@@ -67,12 +67,12 @@ export default function PassengerDashboardPage() {
 
               <div className="relative">
                 {/* Timeline */}
-                <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
+                <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-border"></div>
 
                 <div className="space-y-6">
                   {/* Surat */}
                   <div className="flex items-start gap-4 relative">
-                    <div className="h-2 w-2 bg-gray-400 rounded-full mt-1.5 ml-[12px] z-10"></div>
+                    <div className="h-2 w-2 bg-muted-foreground rounded-full mt-1.5 ml-[12px] z-10"></div>
                     <div className="flex-grow">
                       <p className="font-semibold">Surat (ST)</p>
                       <p className="text-sm text-muted-foreground">Departed</p>
@@ -82,21 +82,21 @@ export default function PassengerDashboardPage() {
 
                   {/* Vadodara */}
                   <div className="flex items-center gap-4 relative">
-                    <div className="bg-primary rounded-full p-1.5 ml-[6px] z-10">
+                    <div className="bg-primary rounded-full p-1.5 ml-[6px] z-10 ring-4 ring-primary/20">
                       <Train className="h-5 w-5 text-primary-foreground" />
                     </div>
                     <div className="flex-grow">
                       <p className="font-bold text-primary text-lg">
                         Vadodara Jn (BRC)
                       </p>
-                      <p className="text-sm text-blue-500">Arriving Soon</p>
+                      <p className="text-sm text-primary">Arriving Soon</p>
                     </div>
-                    <p className="text-sm font-semibold text-blue-500">15m</p>
+                    <p className="text-sm font-semibold text-primary">15m</p>
                   </div>
 
                   {/* Ratlam */}
                   <div className="flex items-start gap-4 relative">
-                    <div className="h-2 w-2 bg-gray-400 rounded-full mt-1.5 ml-[12px] z-10"></div>
+                    <div className="h-2 w-2 bg-muted-foreground rounded-full mt-1.5 ml-[12px] z-10"></div>
                     <div className="flex-grow">
                       <p className="font-semibold">Ratlam Jn (RTM)</p>
                       <p className="text-sm text-muted-foreground">Next Stop</p>
@@ -117,17 +117,17 @@ export default function PassengerDashboardPage() {
               </div>
               <div className="flex items-end gap-2 mb-3">
                 <h2 className="text-5xl font-bold">B3</h2>
-                <Separator orientation="vertical" className="h-10 w-px bg-gray-300" />
+                <Separator orientation="vertical" className="h-10 w-px bg-border" />
                 <h2 className="text-5xl font-bold">45</h2>
                 <Badge variant="secondary" className="self-center">Lower Berth</Badge>
               </div>
               {isPresenceConfirmed ? (
-                <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 font-semibold text-sm p-2 rounded-md flex items-center justify-center gap-2">
+                <div className="bg-green-500/10 text-green-400 font-semibold text-sm p-2 rounded-md flex items-center justify-center gap-2 border border-green-500/20">
                    <Check className="h-4 w-4" />
                    Presence Confirmed
                 </div>
               ): (
-                <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 font-semibold text-sm p-2 rounded-md flex items-center justify-center gap-2">
+                <div className="bg-yellow-500/10 text-yellow-400 font-semibold text-sm p-2 rounded-md flex items-center justify-center gap-2 border border-yellow-500/20">
                    <span className="h-2 w-2 bg-yellow-500 rounded-full"></span>
                     Presence Not Confirmed
                 </div>
@@ -161,7 +161,7 @@ export default function PassengerDashboardPage() {
 
           <div className="pt-2">
             <Button 
-                className="w-full text-base py-6"
+                className="w-full text-base py-6 font-bold"
                 onClick={handleConfirmOnboard}
                 disabled={isPresenceConfirmed}
             >

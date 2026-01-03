@@ -56,9 +56,9 @@ export function PassengerLoginForm({ onLoginSuccess }: PassengerLoginFormProps) 
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-          <TabsTrigger value="mobile" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm rounded-md">Mobile Number</TabsTrigger>
-          <TabsTrigger value="pnr" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm rounded-md">PNR Number</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 bg-muted/50 rounded-lg p-1">
+          <TabsTrigger value="mobile" className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md">Mobile Number</TabsTrigger>
+          <TabsTrigger value="pnr" className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md">PNR Number</TabsTrigger>
         </TabsList>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-6">
@@ -95,7 +95,7 @@ export function PassengerLoginForm({ onLoginSuccess }: PassengerLoginFormProps) 
             </TabsContent>
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white text-base py-6"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-base py-6"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -107,13 +107,9 @@ export function PassengerLoginForm({ onLoginSuccess }: PassengerLoginFormProps) 
         </Form>
       </Tabs>
       
-      <div className="bg-gray-100 dark:bg-gray-800/50 rounded-lg flex items-center justify-center h-24">
-        <Ticket className="h-8 w-8 text-gray-400 dark:text-gray-500" />
-      </div>
-
-      <Alert variant="default" className="bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800">
-        <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-        <AlertDescription className="text-blue-800 dark:text-blue-300 text-xs">
+      <Alert variant="default" className="bg-primary/10 border-primary/20">
+        <Info className="h-4 w-4 text-primary" />
+        <AlertDescription className="text-primary/80 text-xs">
             <strong>Important:</strong> This app does not replace ticket verification by the TTE. Please carry your original valid ID proof and ticket during the journey.
         </AlertDescription>
       </Alert>
