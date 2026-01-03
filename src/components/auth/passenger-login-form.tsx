@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -27,7 +28,11 @@ const formSchema = z.object({
   pnr: z.string().optional(),
 });
 
-export function PassengerLoginForm() {
+interface PassengerLoginFormProps {
+  onLoginSuccess: () => void;
+}
+
+export function PassengerLoginForm({ onLoginSuccess }: PassengerLoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("mobile");
 
@@ -45,6 +50,7 @@ export function PassengerLoginForm() {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsLoading(false);
+    onLoginSuccess();
   }
 
   return (
