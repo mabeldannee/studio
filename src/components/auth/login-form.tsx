@@ -85,12 +85,13 @@ export function LoginForm() {
 
     // Wait for user to see the AI message, then redirect
     setTimeout(() => {
-      router.push("/dashboard");
-    }, aiExplanation ? 4000 : 1000);
+        setIsLoading(false);
+        router.push("/dashboard");
+    }, aiExplanation ? 2000 : 500);
   }
 
   return (
-    <Card className="shadow-lg">
+    <Card className="bg-card/80 backdrop-blur-sm border-border/50 shadow-lg">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardHeader>
@@ -148,7 +149,7 @@ export function LoginForm() {
               className="w-full"
               disabled={isLoading}
             >
-              {isLoading ? (
+              {isLoading || isAiLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 <LogIn className="mr-2 h-4 w-4" />
