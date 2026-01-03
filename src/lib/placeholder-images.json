@@ -21,8 +21,8 @@
     {
       "id": "home-hero-train",
       "description": "A modern train moving quickly, providing a dynamic and futuristic hero image for the main landing page.",
-      "imageUrl": "https://images.unsplash.com/photo-1559922262-cec0a58a6428?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx0cmFpbiUyMG1vdmluZ3xlbnwwfHx8fDE3NjkzODMzNjB8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "train moving"
+      "imageUrl": "https://images.unsplash.com/photo-1621342261715-7a42a2298f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxpbmRpYW4lMjByYWlsd2F5c3xlbnwwfHx8fDE3NjgxODg5Njd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian railway"
     }
   ]
 }
