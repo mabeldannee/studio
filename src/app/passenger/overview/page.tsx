@@ -111,7 +111,7 @@ export default function PassengerDashboardPage() {
             <CardContent className="p-4">
               <div className="flex justify-between items-center mb-3">
                 <p className="text-sm font-semibold text-muted-foreground">YOUR SEAT DETAILS</p>
-                <Link href="#" passHref>
+                <Link href="/passenger/verification" passHref>
                   <Button variant="link" className="p-0 h-auto text-primary">View Ticket</Button>
                 </Link>
               </div>
