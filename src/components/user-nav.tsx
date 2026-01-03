@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useRouter } from 'next/navigation';
@@ -28,8 +29,9 @@ export function UserNav() {
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('rail-assist-auth');
+      localStorage.removeItem('rail-assist-role');
     }
-    router.push('/login');
+    router.push('/');
   };
 
   return (

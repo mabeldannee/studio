@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   Menu,
@@ -12,6 +13,7 @@ import {
   PlusSquare,
   Headset,
   Check,
+  LogOut,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,12 +22,23 @@ import { Separator } from '@/components/ui/separator';
 import { ConfirmPresenceDialog } from '@/components/passenger/confirm-presence-dialog';
 import { ServiceRequestDialog } from '@/components/passenger/service-request-dialog';
 import type { ServiceRequestType } from '@/lib/types';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function PassengerDashboardPage() {
+  const router = useRouter();
   const [isPresenceConfirmed, setIsPresenceConfirmed] = useState(false);
   const [isConfirmingPresence, setIsConfirmingPresence] = useState(false);
   const [isRequestingService, setIsRequestingService] = useState(false);
   const [serviceType, setServiceType] = useState<ServiceRequestType | null>(null);
+
+  const passengerAvatar = PlaceHolderImages.find(img => img.id === 'passenger-avatar');
 
   const handleConfirmOnboard = () => {
     setIsConfirmingPresence(true);
@@ -43,6 +56,11 @@ export default function PassengerDashboardPage() {
   const handleServiceRequestClose = () => {
     setIsRequestingService(false);
     setServiceType(null);
+  };
+
+  const handleLogout = () => {
+    // A real app would have a more robust session clearing mechanism
+    router.push('/');
   };
 
   const serviceButtons: { type: ServiceRequestType; icon: React.ElementType; label: string }[] = [
@@ -65,9 +83,24 @@ export default function PassengerDashboardPage() {
             <p className="text-sm text-muted-foreground">Train No. 12951</p>
             <h1 className="font-bold text-lg">Rajdhani Express</h1>
           </div>
-          <Button variant="ghost" size="icon" className="relative">
-            <User className="h-6 w-6 text-primary" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative">
+                <Avatar className="h-8 w-8">
+                  {passengerAvatar && (
+                    <AvatarImage src={passengerAvatar.imageUrl} alt="Passenger" data-ai-hint={passengerAvatar.imageHint} />
+                  )}
+                  <AvatarFallback>P</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-40" align="end">
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </header>
 
         <main className="p-4 space-y-4">

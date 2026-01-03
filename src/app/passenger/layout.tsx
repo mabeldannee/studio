@@ -1,6 +1,7 @@
+
 'use client';
 
-import { Home, Ticket, Bell, User, MapPinned } from 'lucide-react';
+import { Home, Ticket, Bell, MapPinned } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -10,7 +11,6 @@ const navItems = [
   { href: '/passenger/journey', icon: MapPinned, label: 'Journey' },
   { href: '/passenger/verification', icon: Ticket, label: 'Ticket' },
   { href: '/passenger/updates', icon: Bell, label: 'Updates' },
-  { href: '#', icon: User, label: 'Profile' },
 ];
 
 export default function PassengerLayout({
