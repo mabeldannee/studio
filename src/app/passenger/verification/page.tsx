@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { ArrowLeft, User, CheckCircle, Clock, Info, AlertTriangle, ChevronRight, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
@@ -65,7 +65,7 @@ export default function VerificationStatusPage() {
                             <p className="font-semibold flex items-center gap-2"><BookOpen className='h-5 w-5 text-primary'/> Current Status</p>
                         </CardHeader>
                         <CardContent className="p-4 space-y-3">
-                            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200 dark:bg-green-900/30 dark:border-green-700">
                                 <div className="flex items-center gap-3">
                                     <CheckCircle className="h-5 w-5 text-green-600" />
                                     <div>
@@ -75,7 +75,7 @@ export default function VerificationStatusPage() {
                                 </div>
                                 <p className="text-sm font-bold text-green-600">Confirmed</p>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
+                            <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200 dark:bg-orange-900/30 dark:border-orange-700">
                                 <div className="flex items-center gap-3">
                                     <Clock className="h-5 w-5 text-orange-600" />
                                     <div>
@@ -115,13 +115,13 @@ export default function VerificationStatusPage() {
                         </CardContent>
                     </Card>
                     
-                    <Card className="bg-yellow-50 border-yellow-200">
+                    <Card className="bg-yellow-50 border-yellow-200 dark:bg-yellow-900/30 dark:border-yellow-700">
                         <CardContent className="p-4">
                             <div className="flex items-start gap-3">
                                 <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                                 <div>
                                     <h3 className="font-bold">Important</h3>
-                                    <p className="text-xs text-yellow-800 mt-1">
+                                    <p className="text-xs text-yellow-800 dark:text-yellow-300 mt-1">
                                         The TTE will physically verify your ticket during the journey. Presence confirmation in this app is informational only and does not replace official ticket verification.
                                     </p>
                                 </div>
