@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import type { Seat, SeatStatus } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
-import { Bot, Loader2, ShieldAlert, Check, AlertTriangle, UserCheck, HelpCircle, UserX, UserRoundCog, Ban, Replace, WifiOff } from 'lucide-react';
+import { Bot, Loader2, ShieldAlert, Check, AlertTriangle, UserCheck, HelpCircle, UserX, UserRoundCog, Ban, Replace, WifiOff, User } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { explainAlert } from '@/ai/flows/explain-alerts';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
@@ -106,25 +106,25 @@ export function SeatDetailsSheet({ seat, isOpen, onOpenChange, onUpdateStatus }:
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-md flex flex-col p-0">
-        <SheetHeader className="p-6">
+        <SheetHeader className="p-6 pb-2">
           <SheetTitle className="text-2xl">Seat {seat.seatNumber.split('-').pop()} - {seat.berth}</SheetTitle>
           <SheetDescription>
             Coach {seat.seatNumber.split('-')[0]} - {seat.passenger?.class}
           </SheetDescription>
         </SheetHeader>
-        <div className="px-6 space-y-4">
+        <div className="px-6 pb-6 space-y-4 border-b">
             <div className="flex items-center gap-4">
-                <Avatar className="h-12 w-12">
-                  {passengerAvatar && <AvatarImage src={passengerAvatar.imageUrl} alt="Passenger" data-ai-hint={passengerAvatar.imageHint} />}
-                  <AvatarFallback>{seat.passenger?.name.charAt(0)}</AvatarFallback>
-                </Avatar>
+                <div className="p-2 bg-primary/10 rounded-full">
+                    <User className="h-5 w-5 text-primary"/>
+                </div>
                 <div>
                     <p className="font-bold text-lg">{seat.passenger?.name}</p>
                     <p className="text-sm text-muted-foreground">PNR: {seat.passenger?.pnr}</p>
                 </div>
-                 <Badge className={cn(statusBadgeVariants({ status: seat.status }), 'ml-auto')} variant="outline">
-                    {seat.status}
-                </Badge>
+                 <div className="text-right ml-auto">
+                    <p className="font-bold text-lg">{seat.passenger?.age} {seat.passenger?.gender}</p>
+                    <p className="text-sm text-muted-foreground">CNF</p>
+                 </div>
             </div>
              <Alert variant="default" className="bg-yellow-500/10 border-yellow-500/20 text-yellow-400">
                 <WifiOff className="h-4 w-4 text-yellow-400" />
@@ -136,29 +136,8 @@ export function SeatDetailsSheet({ seat, isOpen, onOpenChange, onUpdateStatus }:
         </div>
 
         <div className="py-6 px-6 space-y-6 flex-grow overflow-y-auto">
-          
-          {(isAiLoading || aiExplanation) && (
-            <div className="space-y-2">
-                <h4 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-2">
-                    <Bot className="h-4 w-4" />
-                    AI Intel
-                </h4>
-                {isAiLoading ? (
-                    <div className="flex items-center text-sm text-muted-foreground"><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Analyzing...</div>
-                ) : (
-                    aiExplanation && (
-                        <Alert variant="destructive">
-                            <ShieldAlert className="h-4 w-4" />
-                            <AlertTitle>Verification Recommended</AlertTitle>
-                            <AlertDescription>{aiExplanation}</AlertDescription>
-                        </Alert>
-                    )
-                )}
-            </div>
-          )}
-
            <div className='space-y-3'>
-                <h4 className="text-sm font-semibold text-muted-foreground">Select Action</h4>
+                <h4 className="text-sm font-semibold text-muted-foreground">SELECT ACTION</h4>
                 <RadioGroup value={selectedAction} onValueChange={(v) => setSelectedAction(v as Action)}>
                     <Label htmlFor='action-verified' className={cn("flex items-center gap-3 p-3 rounded-lg border-2", selectedAction === 'Ticket Verified' ? "border-primary bg-primary/5" : "border-border")}>
                         <div className={cn("h-8 w-8 rounded-full flex items-center justify-center", selectedAction === 'Ticket Verified' ? "bg-green-500" : "bg-muted")}>
@@ -194,7 +173,7 @@ export function SeatDetailsSheet({ seat, isOpen, onOpenChange, onUpdateStatus }:
            </div>
            
             <div className='space-y-2'>
-                 <h4 className="text-sm font-semibold text-muted-foreground">Remarks (Optional)</h4>
+                 <h4 className="text-sm font-semibold text-muted-foreground">REMARKS (OPTIONAL)</h4>
                  <Textarea placeholder="e.g., Fine collected, ID mismatch details..." />
             </div>
 

@@ -19,7 +19,7 @@ const presenceSources: Seat['presenceSource'][] = ['Passenger', 'Visual', 'Infer
 const stations = ['New Delhi', 'Kanpur', 'Allahabad', 'Mughalsarai'];
 const serviceRequestTypes: ServiceRequestType[] = ['Food', 'Clean', 'Medical', 'Help'];
 const serviceRequestStatuses: ServiceRequestStatus[] = ['Waiting for Action', 'In Progress', 'Closed'];
-const passengerNames = ['Rajesh K.', 'Priya S.', 'Amit V.', 'Sunita M.', 'V. Kumar', 'Deepa R.'];
+const passengerNames = ['Rajesh K.', 'Priya S.', 'Amit V.', 'Sunita M.', 'V. Kumar', 'Deepa R.', 'John Doe', 'P. Kumar', 'I. Devi', 'S. Lee', 'P. Patel', 'R. Khan'];
 
 const generateServiceRequests = (coachId: string, seats: Seat[]): ServiceRequest[] => {
     const requests: ServiceRequest[] = [];
@@ -62,9 +62,8 @@ const generateSeats = (coachId: string, count: number): Seat[] => {
         presenceTimestamp = new Date(Date.now() - Math.random() * 1000 * 60 * 30).toISOString();
         presenceSource = presenceSources[Math.floor(Math.random() * presenceSources.length)];
         presenceContext = `Confirmed after ${stations[Math.floor(Math.random() * stations.length)]} Station`;
-    } else {
-        // Ensure that only Presence Confirmed seats have presence details
-        status = (['Unverified Presence', 'Likely Vacant', 'Ticket Verified'] as SeatStatus[])[Math.floor(Math.random() * 3)];
+    } else if (status !== 'Ticket Verified') {
+        // Ensure other statuses don't have presence details
     }
 
 
@@ -119,33 +118,34 @@ const generateCoaches = (trainId: string, coachNumbers: string[]): Coach[] => {
 
 const generateAlertsForSeat = (trainId: string, coachId: string, seat: Seat): Alert[] => {
     const alerts: Alert[] = [];
-    if (seat.status === 'Presence Confirmed' && (seat.presenceConfidence === 'Late' || seat.presenceConfidence === 'Anomalous')) {
-        alerts.push({
-          id: `alert-presence-${seat.id}`,
-          trainId,
-          coachId: coachId,
-          seatId: seat.id,
-          type: 'Presence Confirmed but Ticket Unverified',
-          description: `Seat ${seat.seatNumber} has a confirmed presence but the ticket is not verified.`,
-          timestamp: new Date().toISOString(),
-          urgency: 'high',
-          context: { presenceTiming: seat.presenceConfidence }
-        });
+    if (seat.status === 'Presence Confirmed' || seat.status === 'Unverified Presence') {
+        const rand = Math.random();
+        if (rand < 0.3) {
+            alerts.push({
+              id: `alert-age-${seat.id}`,
+              trainId,
+              coachId: coachId,
+              seatId: seat.id,
+              type: 'Passenger age discrepancy',
+              description: `Passenger age discrepancy flagged`,
+              timestamp: new Date().toISOString(),
+              urgency: 'high',
+            });
+        } else if (rand < 0.6) {
+             alerts.push({
+              id: `alert-ticket-${seat.id}`,
+              trainId,
+              coachId: coachId,
+              seatId: seat.id,
+              type: 'Ticket not scanned at entry',
+              description: `Ticket for seat ${seat.seatNumber} was not scanned at the entry gate.`,
+              timestamp: new Date().toISOString(),
+              urgency: 'high',
+            });
+        }
     }
-    if (seat.status === 'Unverified Presence' && Math.random() > 0.8) {
-         alerts.push({
-          id: `alert-age-${seat.id}`,
-          trainId,
-          coachId: coachId,
-          seatId: seat.id,
-          type: 'Passenger age discrepancy',
-          description: `Passenger age discrepancy flagged`,
-          timestamp: new Date().toISOString(),
-          urgency: 'high',
-        });
-    }
-
-    if (seat.status === 'Likely Vacant' && Math.random() > 0.9) {
+    
+    if (seat.status === 'Likely Vacant' && Math.random() > 0.5) {
         alerts.push({
           id: `alert-vacant-${seat.id}`,
           trainId,
@@ -166,16 +166,18 @@ const generateAlerts = (trainId: string, coaches: Coach[]): Alert[] => {
   coaches.forEach(coach => {
     coach.seats.forEach(seat => {
       const seatAlerts = generateAlertsForSeat(trainId, coach.id, seat);
-      seat.alert = seatAlerts[0];
-      alerts.push(...seatAlerts);
+      if(seatAlerts.length > 0){
+        seat.alert = seatAlerts[0];
+        alerts.push(...seatAlerts);
+      }
     });
-    if (coach.occupancy > 95) {
+    if (coach.occupancy > 95 && Math.random() > 0.5) {
         alerts.push({
           id: `alert-overcrowd-${coach.id}`,
           trainId,
           coachId: coach.id,
           type: 'High crowd density detected',
-          description: `Coach ${coach.coachNumber} is at ${coach.occupancy}% capacity. Monitor for overcrowding.`,
+          description: `Coach ${coach.coachNumber} is at ${coach.occupancy}% capacity.`,
           timestamp: new Date().toISOString(),
           urgency: 'low',
         });
