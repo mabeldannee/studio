@@ -1,119 +1,144 @@
 
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Train, Bed, Info, CheckCircle, MoreHorizontal, ArrowRight } from 'lucide-react';
+import { ArrowLeft, User, CheckCircle, Clock, Info, AlertTriangle, ChevronRight, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 export default function VerificationStatusPage() {
-    const passengerAvatar = PlaceHolderImages.find(img => img.id === 'passenger-avatar');
-
-    const [isPresenceConfirmed, setIsPresenceConfirmed] = useState(true);
-    const [isTicketChecked, setIsTicketChecked] = useState(false);
-
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-950 flex justify-center">
-            <div className="w-full max-w-md bg-white dark:bg-black shadow-lg">
-                <header className="p-4 flex items-center bg-white dark:bg-black sticky top-0 z-10 border-b">
-                    <Link href="/passenger/overview" passHref>
-                        <Button variant="ghost" size="icon">
-                            <ArrowLeft className="h-6 w-6" />
-                        </Button>
-                    </Link>
-                    <h1 className="font-bold text-lg text-center flex-grow">Verification Status</h1>
-                    <div className="w-10"></div>
+        <div className="min-h-screen bg-muted/30 flex justify-center">
+            <div className="w-full max-w-md bg-background shadow-lg">
+                <header className="p-4 bg-background sticky top-0 z-10 border-b">
+                    <div className='relative flex items-center'>
+                         <Link href="/passenger/overview" passHref className='absolute'>
+                            <Button variant="ghost" size="icon">
+                                <ArrowLeft className="h-6 w-6" />
+                            </Button>
+                        </Link>
+                        <div className='text-center flex-grow'>
+                            <h1 className="font-bold text-lg">Verification Status</h1>
+                            <p className="text-sm text-muted-foreground">Passenger Details</p>
+                        </div>
+                    </div>
                 </header>
 
-                <main className="p-4 space-y-6">
-                    <div>
-                        <p className="text-sm font-semibold text-muted-foreground mb-2">PASSENGER DETAILS</p>
-                        <Card>
-                            <CardContent className="p-4 flex items-center gap-4">
-                                <Avatar className="h-14 w-14">
-                                    {passengerAvatar && (
-                                        <AvatarImage 
-                                            src={passengerAvatar.imageUrl} 
-                                            alt="Passenger avatar" 
-                                            data-ai-hint={passengerAvatar.imageHint}
-                                        />
-                                    )}
-                                    <AvatarFallback>RK</AvatarFallback>
-                                </Avatar>
-                                <div className="flex-grow">
-                                    <div className="flex justify-between items-start">
-                                        <h2 className="font-bold text-lg">Rajesh Kumar</h2>
-                                        <Badge className="bg-green-100 text-green-800 border-green-300">CNF</Badge>
-                                    </div>
-                                    <p className="text-muted-foreground text-sm">PNR: 8203491234</p>
-                                    <div className="flex items-center gap-4 text-muted-foreground text-sm mt-1">
-                                        <div className="flex items-center gap-1.5">
-                                            <Train className="h-4 w-4" />
-                                            <span>12951</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <Bed className="h-4 w-4" />
-                                            <span>B1-42</span>
-                                        </div>
-                                    </div>
+                <main className="p-4 space-y-4">
+                    <Card>
+                        <CardContent className="p-4 space-y-4">
+                           <div className='flex items-center gap-4'>
+                                <div className='p-3 bg-primary/10 rounded-full'>
+                                    <User className="h-6 w-6 text-primary" />
                                 </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                     <div>
-                        <div className="flex justify-between items-center mb-2">
-                            <p className="text-sm font-semibold text-muted-foreground">CURRENT STATUS</p>
-                            <p className="text-xs text-muted-foreground">Updated 2m ago</p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <Card className={`p-4 flex flex-col items-center justify-center text-center gap-2 ${isPresenceConfirmed ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800' : ''}`}>
-                                <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isPresenceConfirmed ? 'bg-green-100 dark:bg-green-900' : 'bg-gray-100'}`}>
-                                    <CheckCircle className={`h-6 w-6 ${isPresenceConfirmed ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}`} />
+                                <div className='flex-grow'>
+                                    <p className='font-bold'>Rajesh Kumar</p>
+                                    <p className='text-sm text-muted-foreground'>PNR: 8204591234</p>
                                 </div>
-                                <p className="font-semibold">Presence</p>
-                                <p className={`text-sm font-bold ${isPresenceConfirmed ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
-                                    {isPresenceConfirmed ? 'Confirmed' : 'Not Confirmed'}
-                                </p>
-                            </Card>
-                             <Card className={`p-4 flex flex-col items-center justify-center text-center gap-2 ${isTicketChecked ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800' : 'bg-yellow-50 dark:bg-yellow-900/30 border-yellow-200 dark:border-yellow-800'}`}>
-                                <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isTicketChecked ? 'bg-green-100' : 'bg-yellow-100 dark:bg-yellow-900'}`}>
-                                    {isTicketChecked ? (
-                                        <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
-                                    ) : (
-                                        <MoreHorizontal className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
-                                    )}
-                                </div>
-                                <p className="font-semibold">Ticket Check</p>
-                                <p className={`text-sm font-bold ${isTicketChecked ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
-                                    {isTicketChecked ? 'Verified' : 'Pending'}
-                                </p>
-                            </Card>
-                        </div>
-                    </div>
-                    
-                    <Card className="bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800">
-                        <CardContent className="p-4">
-                            <div className="flex gap-4">
-                                <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
+                                <Badge className="bg-green-100 text-green-800 border-green-200">CNF</Badge>
+                           </div>
+                           <div className="grid grid-cols-2 gap-4 text-sm">
                                 <div>
-                                    <h3 className="font-bold text-blue-900 dark:text-blue-200">Verification Process</h3>
-                                    <p className="text-sm text-blue-800 dark:text-blue-300 mt-1">
-                                        This app check-in is optional. The Travelling Ticket Examiner (TTE) will physically verify your documents during the journey.
+                                    <p className="text-muted-foreground">Train</p>
+                                    <p className="font-semibold">12951 - Rajdhani Express</p>
+                                </div>
+                                 <div className='text-right'>
+                                    <p className="text-muted-foreground">Booking Date</p>
+                                    <p className="font-semibold">28 Dec 2025</p>
+                                </div>
+                                 <div>
+                                    <p className="text-muted-foreground">From</p>
+                                    <p className="font-semibold">Mumbai Central</p>
+                                </div>
+                                 <div className='text-right'>
+                                    <p className="text-muted-foreground">To</p>
+                                    <p className="font-semibold">New Delhi</p>
+                                </div>
+                           </div>
+                        </CardContent>
+                    </Card>
+
+                     <Card>
+                        <CardHeader className='p-4 pb-0'>
+                            <p className="font-semibold flex items-center gap-2"><BookOpen className='h-5 w-5 text-primary'/> Current Status</p>
+                        </CardHeader>
+                        <CardContent className="p-4 space-y-3">
+                            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                                <div className="flex items-center gap-3">
+                                    <CheckCircle className="h-5 w-5 text-green-600" />
+                                    <div>
+                                        <p className="font-semibold">Presence</p>
+                                        <p className="text-xs text-muted-foreground">Confirmed at 10:45 AM</p>
+                                    </div>
+                                </div>
+                                <p className="text-sm font-bold text-green-600">Confirmed</p>
+                            </div>
+                            <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
+                                <div className="flex items-center gap-3">
+                                    <Clock className="h-5 w-5 text-orange-600" />
+                                    <div>
+                                        <p className="font-semibold">Ticket Check</p>
+                                        <p className="text-xs text-muted-foreground">Awaiting physical verification by TTE</p>
+                                    </div>
+                                </div>
+                                <p className="text-sm font-bold text-orange-600">Pending</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    
+                    <Card>
+                        <CardHeader className='p-4'>
+                            <p className="font-semibold flex items-center gap-2"><Info className='h-5 w-5 text-primary'/> Verification Process</p>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0 text-sm space-y-4">
+                           <div className="flex items-start gap-4">
+                                <div className="flex flex-col items-center gap-1">
+                                    <div className="bg-green-600 rounded-full p-1.5">
+                                        <CheckCircle className="h-4 w-4 text-white" />
+                                    </div>
+                                    <div className="w-px h-12 bg-border"></div>
+                                </div>
+                                <div>
+                                    <p className="font-semibold">Presence Confirmed</p>
+                                    <p className="text-muted-foreground text-xs">This app check-in is optional. The Travelling Ticket Examiner (TTE) will physically verify your documents during the journey.</p>
+                                </div>
+                           </div>
+                           <div className="flex items-start gap-4">
+                               <div className="bg-primary text-primary-foreground rounded-full h-7 w-7 flex items-center justify-center text-xs font-bold">2</div>
+                               <div>
+                                    <p className="font-semibold">TTE Verification</p>
+                                    <p className="text-muted-foreground text-xs">The TTE will physically verify your ticket during the journey. Please keep your ticket and ID ready.</p>
+                                </div>
+                           </div>
+                        </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-yellow-50 border-yellow-200">
+                        <CardContent className="p-4">
+                            <div className="flex items-start gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <h3 className="font-bold">Important</h3>
+                                    <p className="text-xs text-yellow-800 mt-1">
+                                        The TTE will physically verify your ticket during the journey. Presence confirmation in this app is informational only and does not replace official ticket verification.
                                     </p>
-                                    <Button variant="link" className="p-0 h-auto mt-3 text-blue-600 dark:text-blue-400 font-bold">
-                                        How verification works <ArrowRight className="h-4 w-4 ml-1" />
-                                    </Button>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
+                    <Accordion type="single" collapsible>
+                        <AccordionItem value="item-1" className="border-none">
+                            <AccordionTrigger className="font-semibold text-sm rounded-lg hover:no-underline bg-card p-4 -mb-2">
+                                How verification works
+                            </AccordionTrigger>
+                            <AccordionContent className="bg-card p-4 rounded-b-lg">
+                                This section explains the two-step verification process, emphasizing the difference between digital presence confirmation and physical ticket validation by the TTE.
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
                 </main>
             </div>
         </div>
